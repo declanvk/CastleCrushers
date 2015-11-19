@@ -14,12 +14,12 @@ public class Human {
   }
 
   public void draw() {
-  //  ellipse(this.centerX, this.centerY, this.size, this.size);
+    //  ellipse(this.centerX, this.centerY, this.size, this.size);
 
     pushMatrix();
     translate(this.centerX, centerY);
     scale(this.size); // I think a scale of 2x or 3x is best but we can discuss
-    
+
     if (movingUp) {
 
       // Legs (must be able to animate when going one consistent direction)
@@ -182,6 +182,7 @@ public class Human {
       fill(205, 50, 50);
       ellipse(5, 11, 3, 6);
     }
+    popMatrix();
   }
 
   public void update() {

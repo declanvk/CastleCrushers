@@ -2,7 +2,7 @@ Human character;
 int x = 0;
 void setup() {
   size(600, 600);
-  character = new Human(100, 100, 50);
+  character = new Human(100, 100, 2);
 }
 
 void draw() {
