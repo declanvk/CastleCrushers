@@ -1,12 +1,14 @@
 Human character;
+Map map;
 int x = 0;
 void setup() {
   size(600, 600);
+  map = new Map(600, 600);
   character = new Human(100, 100, 2);
 }
 
 void draw() {
-  background(0);
+  background(map.getBackground());
   character.update();
   character.draw();
 }
