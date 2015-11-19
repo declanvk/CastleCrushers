@@ -1,6 +1,6 @@
 public class Human {
   final int MOVESPEED=5;
-  public float centerX, centerY, size;
+  public float centerX, centerY, size, rotateLeg, rotateArm;
   public boolean movingUp, movingDown, movingRight, movingLeft;
   public PImage img;
 
@@ -8,6 +8,7 @@ public class Human {
     this.centerX=x;
     this.centerY=y;
     this.size=sz;
+    this.rotateLeg=0;
   }
 
   public void setImage() {
@@ -22,7 +23,9 @@ public class Human {
 
     if (movingUp) {
 
-      // Legs (must be able to animate when going one consistent direction)
+      // Legs
+
+
 
       // Body
       fill(255);
@@ -101,7 +104,25 @@ public class Human {
 
     if (movingLeft) {
 
-      // Legs (must be able to animate when going one consistent direction)
+      // Legs 
+
+      pushMatrix();
+      fill(255);
+      translate(5, 5);
+      translate(5, 19);
+      rotate(-rotateLeg);
+      translate(-5, -19);
+      rect(5, 18, 4, 10);
+      popMatrix();
+
+      pushMatrix();
+      fill(255);
+      translate(7, 5);
+      translate(0, 19);
+      rotate(rotateLeg);
+      translate(0, -19);
+      rect(0, 18, 4, 10);
+      popMatrix();
 
       // Body
       fill(255);
@@ -139,12 +160,30 @@ public class Human {
       // Ear Plate
       fill(205, 50, 50);
       ellipse(10, 11, 3, 6);
+
     }
 
     if (movingRight) {
 
-      // Legs (must be able to animate when going one consistent direction)
+      // Legs 
 
+      pushMatrix();
+      fill(255);
+      translate(2, 5);
+      translate(5, 19);
+      rotate(-rotateLeg);
+      translate(-5, -19);
+      rect(5, 18, 4, 10);
+      popMatrix();
+
+      pushMatrix();
+      fill(255);
+      translate(3, 5);
+      translate(0, 19);
+      rotate(rotateLeg);
+      translate(0, -19);
+      rect(0, 18, 4, 10);
+      popMatrix();
       // Body
       fill(255);
       ellipse(7, 20, 10, 15);
@@ -202,6 +241,8 @@ public class Human {
       this.centerY+=MOVESPEED;
     else if (movingDown)
       this.centerY=height-this.size/2;
+      
+
   }
 }
 
