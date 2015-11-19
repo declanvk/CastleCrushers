@@ -23,8 +23,25 @@ public class Human {
 
     if (movingUp) {
 
-      // Legs
+      // Legs 
 
+      pushMatrix();
+      fill(255);
+      translate(0, 5);
+      translate(5, 19);
+      rotate(-rotateLeg);
+      translate(-5, -19);
+      rect(5, 18, 4, 10);
+      popMatrix();
+
+      pushMatrix();
+      fill(255);
+      translate(9, 5);
+      translate(0, 19);
+      rotate(rotateLeg);
+      translate(0, -19);
+      rect(0, 18, 4, 10);
+      popMatrix();
 
 
       // Body
@@ -52,7 +69,25 @@ public class Human {
 
     if (movingDown) {
 
-      // Legs (must be able to animate when going one consistent direction)
+      // Legs 
+
+      pushMatrix();
+      fill(255);
+      translate(0, 5);
+      translate(5, 19);
+      rotate(-rotateLeg);
+      translate(-5, -19);
+      rect(5, 18, 4, 10);
+      popMatrix();
+
+      pushMatrix();
+      fill(255);
+      translate(9, 5);
+      translate(0, 19);
+      rotate(rotateLeg);
+      translate(0, -19);
+      rect(0, 18, 4, 10);
+      popMatrix();
 
       // Body
       fill(255);
