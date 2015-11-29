@@ -2,15 +2,17 @@ Human character;
 Map map;
 int x = 0;
 void setup() {
-  size(600, 600);
-  map = new Map(600, 600);
+  size(610, 610);
+  map = new Map(width, height);
   character = new Human(100, 100, 2);
+  frameRate(60);
 }
 
 void draw() {
   background(map.getBackground());
   character.update();
   character.draw();
+  //drawBat();
 }
 
 void keyPressed() {

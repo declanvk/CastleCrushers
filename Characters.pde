@@ -15,6 +15,7 @@ public class Human {
   }
 
   public void draw() {
+    pushStyle();
     //  ellipse(this.centerX, this.centerY, this.size, this.size);
 
     pushMatrix();
@@ -195,7 +196,6 @@ public class Human {
       // Ear Plate
       fill(205, 50, 50);
       ellipse(10, 11, 3, 6);
-
     }
 
     if (movingRight) {
@@ -257,6 +257,7 @@ public class Human {
       ellipse(5, 11, 3, 6);
     }
     popMatrix();
+    popStyle();
   }
 
   public void update() {
@@ -276,8 +277,6 @@ public class Human {
       this.centerY+=MOVESPEED;
     else if (movingDown)
       this.centerY=height-this.size/2;
-      
-
   }
 }
 
