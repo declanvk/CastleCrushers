@@ -4,7 +4,7 @@ int x = 0;
 void setup() {
   size(1210, 610);
   map = new Map(width, height);
-  character = new Human(100, 100, 2);
+  character = new Human(100, 100, 1);
   frameRate(60);
 }
 
