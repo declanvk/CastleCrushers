@@ -304,6 +304,7 @@ public class Human {
     } else if (movingDown)
     {
       this.centerY=height-this.size/2;
+
       this.position="DOWN";
     }
   }

@@ -1,19 +1,24 @@
-Human character;
+Human character; //<>//
+Animation anim;
 Map map;
 int x = 0;
 void setup() {
   size(1210, 610);
   map = new Map(width, height);
   character = new Human(100, 100, 1);
+  anim = new Animation();
   frameRate(60);
 }
 
 void draw() {
-  println(frameRate);
-  background(map.getBackground());
-  character.update();
-  character.draw();
-  //drawBat();
+  if (frameCount<672) {
+    anim.draw();
+  } else {
+    background(map.getBackground());
+    character.update();
+    character.draw();
+    //drawBat();
+  }
 }
 
 void keyPressed() {
