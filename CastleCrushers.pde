@@ -9,6 +9,7 @@ void setup() {
 }
 
 void draw() {
+  println(frameRate);
   background(map.getBackground());
   character.update();
   character.draw();

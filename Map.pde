@@ -1,4 +1,4 @@
-private final boolean DEBUG = false;
+private final boolean DEBUG = true;
 
 class Map {
   private final int CELL_HEIGHT_PX = 50;
@@ -15,6 +15,7 @@ class Map {
   private int setNumber;
 
   private final LinkedNode root;
+  private final QuadNode tree;
 
   Map(int w, int h) {
     woodTile = loadImage("wood_floor.png");
@@ -24,14 +25,14 @@ class Map {
     this.floor = generateBackground(woodTile, w, h);
     this.walls = generateBackground(stoneTile, w, h);
 
-    BoundingBox firstWall = new BoundingBox(new Point(0, 0), WALL_WIDTH_PX, height, null, null);
+    BoundingBox firstWall = new BoundingBox(new Point(0, 0), WALL_WIDTH_PX, height);
     this.root = new LinkedNode(null, null, firstWall);
-    firstWall.links = root;
 
     this.mazeColumn = new int[h / (CELL_HEIGHT_PX + WALL_WIDTH_PX)];
     for (setNumber = 0; setNumber < mazeColumn.length; setNumber++)
       mazeColumn[setNumber] = setNumber + 1;
 
+    this.tree = new QuadNode(new BoundingBox(new Point(0, 0), width, height));
     this.maze = generateMaze();
   }
 
@@ -63,12 +64,12 @@ class Map {
     int i = 0;
     int num = width / 60;
     do {
-      mazeColumn = processColumn(node, mazeColumn, new Point(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == num - 1);
+      mazeColumn = processColumnEllers(node, mazeColumn, new Point(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == num - 1);
       while (node.next != null)
         node = node.next;
       i++;
     } while (i < num);
-    
+
     drawMaze(root, maze, fullAlpha);
     return maze;
   }
@@ -76,18 +77,15 @@ class Map {
   private void seedColumns(LinkedNode node) {
     for (int y = WALL_WIDTH_PX + CELL_HEIGHT_PX; y < height; y += WALL_WIDTH_PX + CELL_HEIGHT_PX) {
       for (int x = WALL_WIDTH_PX + CELL_HEIGHT_PX; x < width; x += WALL_WIDTH_PX + CELL_HEIGHT_PX) {
-        newBox(new Point(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-        node = node.next;
+        node = addBox(new Point(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, node);
       }
     }
   }
 
-  private int[] processColumn(LinkedNode prev, int[] column, Point start, boolean end) {
+  private int[] processColumnEllers(LinkedNode prev, int[] column, Point start, boolean end) {
     LinkedNode node = prev;
-    newBox(new Point(start.x, 0), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-    node = node.next;
-    newBox(new Point(start.x, height - WALL_WIDTH_PX), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-    node = node.next;
+    node = addBox(new Point(start.x, 0), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
+    node = addBox(new Point(start.x, height - WALL_WIDTH_PX), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
 
     //Union sets
     for (int i = 0; i < column.length - 1; i++) {
@@ -100,8 +98,7 @@ class Map {
           a++;
         }
       } else if (!end || (end && column[i] == column[i + 1])) {//draw wall
-        newBox(new Point(start.x, (i + 1) * (CELL_HEIGHT_PX + WALL_WIDTH_PX)), WALL_WIDTH_PX + CELL_HEIGHT_PX - 10, WALL_WIDTH_PX, node);
-        node = node.next;
+        node = addBox(new Point(start.x, (i + 1) * (CELL_HEIGHT_PX + WALL_WIDTH_PX)), WALL_WIDTH_PX + CELL_HEIGHT_PX - 10, WALL_WIDTH_PX, node);
       }
     }
 
@@ -113,8 +110,7 @@ class Map {
       if (transfer[i] && !end)
         nextColumn[i] = column[i];
       else {
-        newBox(new Point(start.x + 0 + CELL_HEIGHT_PX, i * (WALL_WIDTH_PX + CELL_HEIGHT_PX) + 10), WALL_WIDTH_PX, (WALL_WIDTH_PX + CELL_HEIGHT_PX) + -10, node);
-        node = node.next;
+        node = addBox(new Point(start.x + 0 + CELL_HEIGHT_PX, i * (WALL_WIDTH_PX + CELL_HEIGHT_PX) + 10), WALL_WIDTH_PX, (WALL_WIDTH_PX + CELL_HEIGHT_PX) + -10, node);
       }
     }
 
@@ -145,10 +141,10 @@ class Map {
       }
 
       int lim = 1 + round(abs(randomGaussian()));
-      
-      if(DEBUG && lim > 1)
+
+      if (DEBUG && lim > 1)
         println(lim);
-        
+
       for (int k = 0; k < lim; k++)
         res[(int) random(start, end)] = true;
 
@@ -166,13 +162,12 @@ class Map {
     return res;
   }
 
-  private BoundingBox newBox(Point p, int w, int h, LinkedNode prev) {
-    BoundingBox wall = new BoundingBox(p, w, h, null, null);
-    LinkedNode next = new LinkedNode(prev, null, wall);
+  private LinkedNode addBox(Point p, int w, int h, LinkedNode prev) {
+    BoundingBox box = new BoundingBox(p, w, h);
+    LinkedNode next = new LinkedNode(prev, null, box);
     prev.next = next;
-    wall.links = root;
 
-    return wall;
+    return next;
   }
 
   private void drawMaze(LinkedNode start, PGraphics pg, color c) {
@@ -216,40 +211,16 @@ class LinkedNode {
   }
 }
 
-class QuadNode {
-  final Point anchor;
-  final int width, height;
-  QuadNode parent, q1, q2, q3, q4;
-
-  final BoundingBox content;
-
-  QuadNode(Point p, int w, int h, BoundingBox b, QuadNode par, QuadNode q1, QuadNode q2, QuadNode q3, QuadNode q4) {
-    this.anchor = p;
-    this.width = w;
-    this.height = h;
-    this.parent = par;
-    this.q1 = q1;
-    this.q2 = q2;
-    this.q3 = q3;
-    this.q4 = q4;
-    this.content = b;
-  }
-}
-
 public class BoundingBox {
 
   //Upper left corner point
   Point anchor;
   int width, height;
-  LinkedNode links;
-  QuadNode bound;
 
-  BoundingBox(Point p, int w, int h, LinkedNode l, QuadNode q) {
+  BoundingBox(Point p, int w, int h) {
     this.anchor = new Point(p.x, p.y);
     this.width = w;
     this.height = h;
-    this.links = l;
-    this.bound = q;
   }
 
   void draw(PGraphics pg, color c) {
@@ -267,6 +238,21 @@ public class BoundingBox {
     pg.popStyle();
 
     pg.endDraw();
+  }
+
+  //Intersection of point and box
+  boolean contains(Point p) {
+    return (p.x > this.anchor.x && p.x < this.anchor.x + this.width) && (p.y > this.anchor.y && p.y < this.anchor.y + this.height);
+  }
+
+  //Box completely contains another box
+  boolean contains(BoundingBox b) {
+    return this.contains(b.anchor) && this.contains(new Point(b.anchor.x + b.width, b.anchor.y + b.height));
+  }
+
+  //Intersection between two boxes
+  boolean intersection(BoundingBox b) {
+    return (abs(this.anchor.x - b.anchor.x) * 2 < (this.width + b.width)) && (abs(this.anchor.y - b.anchor.y) * 2 < (this.height + this.height));
   }
 }
 
