@@ -61,12 +61,13 @@ class Map {
       node = node.next;
 
     int i = 0;
+    int num = width / 60;
     do {
-      mazeColumn = processColumn(node, mazeColumn, new Point(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == 9);
+      mazeColumn = processColumn(node, mazeColumn, new Point(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == num - 1);
       while (node.next != null)
         node = node.next;
       i++;
-    } while (i < 10);
+    } while (i < num);
     
     drawMaze(root, maze, fullAlpha);
     return maze;

@@ -2,7 +2,7 @@ Human character;
 Map map;
 int x = 0;
 void setup() {
-  size(610, 610);
+  size(1210, 610);
   map = new Map(width, height);
   character = new Human(100, 100, 2);
   frameRate(60);
