@@ -1,14 +1,17 @@
 public class Human {
   final int MOVESPEED=5;
-  public float centerX, centerY, size, rotateLeg, rotateArm;
+  public float pointX, pointY, size, rotateLeg, rotateArm, wd, ht;
   public boolean movingUp, movingDown, movingRight, movingLeft;
   public PImage img;
   public String position, last;
+  public Point p;
 
   Human(float x, float y, float sz) {
-    this.centerX=x;
-    this.centerY=y;
+    this.pointX=x;
+    this.pointY=y;
     this.size=sz;
+    this.wd=sz*18;
+    this.ht=sz*35;
     this.rotateLeg=0;
     this.position="RIGHT";
   }
@@ -251,10 +254,8 @@ public class Human {
 
   public void draw() {
     pushStyle();
-    //  ellipse(this.centerX, this.centerY, this.size, this.size);
-
     pushMatrix();
-    translate(this.centerX, centerY);
+    translate(this.pointX, this.pointY);
     scale(this.size); // I think a scale of 2x or 3x is best but we can discuss
 
     if (movingUp || movingLeft || movingDown || movingRight) {
@@ -268,44 +269,48 @@ public class Human {
 
   public void update() {
     this.last=this.position;
-    if (movingRight && this.centerX+this.size/2+MOVESPEED<=width)
+
+    if (movingRight)
     {
-      this.centerX+=MOVESPEED;
-      this.position="RIGHT";
-    } else if (movingRight)
-    {
-      this.centerX=width-this.size/2;
-      this.position="RIGHT";
+      if (this.pointX+this.wd+MOVESPEED<=width) {
+        this.pointX+=MOVESPEED;
+        this.position="RIGHT";
+      } else {
+        this.pointX=width-this.wd;
+        this.position="RIGHT";
+      }
     }
 
-    if (movingLeft && this.centerX-this.size/2-MOVESPEED>=0)
+    if (movingLeft)
     {
-      this.centerX-=MOVESPEED;
-      this.position="LEFT";
-    } else if (movingLeft)
-    {
-      this.centerX=0+this.size/2;
-      this.position="LEFT";
-    }
+      if (this.pointX-MOVESPEED>=0) {
+        this.pointX-=MOVESPEED;
+        this.position="LEFT";
+      } else {
+        this.pointX=0;
+        this.position="LEFT";
+      }
+    } 
 
-    if (movingUp && this.centerY-this.size/2-MOVESPEED>=0)
+    if (movingUp)
     {
-      this.centerY-=MOVESPEED;
-      this.position="UP";
-    } else if (movingUp)
+      if (this.pointY-MOVESPEED>=0) {
+        this.pointY-=MOVESPEED;
+        this.position="UP";
+      } else {
+        this.pointY=0;
+        this.position="UP";
+      }
+    } 
+    if (movingDown)
     {
-      this.centerY=0+this.size/2;
-      this.position="UP";
-    }
-    if (movingDown && this.centerY+this.size/2+MOVESPEED<=height)
-    {
-      this.centerY+=MOVESPEED;
-      this.position="DOWN";
-    } else if (movingDown)
-    {
-      this.centerY=height-this.size/2;
-
-      this.position="DOWN";
+      if (this.pointY+this.ht+MOVESPEED<=height) {
+        this.pointY+=MOVESPEED;
+        this.position="DOWN";
+      } else {
+        this.pointY=height-this.ht;
+        this.position="DOWN";
+      }
     }
   }
 }
