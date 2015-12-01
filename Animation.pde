@@ -27,6 +27,7 @@ public class Animation {
   }
 
   public void draw() {
+    pushStyle();
     background(12, 205, 216);
     fill(78, 155, 16);
     rect(0, height/2, width, height/2);
@@ -37,6 +38,7 @@ public class Animation {
     for (int x = 0; x < num; x++) {
       cloudX[x] += .1;
     }
+    popStyle();
   }
 
   public void Knight() {

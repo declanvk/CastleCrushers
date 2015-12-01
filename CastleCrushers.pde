@@ -11,14 +11,17 @@ void setup() {
 }
 
 void draw() {
-  if (frameCount<672) {
-    anim.draw();
-  } else {
-    background(map.getBackground());
-    character.update();
-    character.draw();
-    //drawBat();
-  }
+  //if (frameCount < 672) {
+  // anim.draw();
+  // } else {
+  println(frameRate);
+  background(map.getBackground());
+  character.update();
+  BoundingBox chrBox = new BoundingBox(new Point(character.pointX, character.pointY), (int)character.wd, (int)character.ht);
+  println(map.query(chrBox).size());
+  character.draw();
+  //drawBat();
+  //}
 }
 
 void keyPressed() {

@@ -1,4 +1,4 @@
-private final boolean DEBUG = true;
+private final boolean DEBUG = false;
 
 class Map {
   private final int CELL_HEIGHT_PX = 50;
@@ -10,20 +10,24 @@ class Map {
   private final int width, height;
   private final PGraphics floor, walls;
   private final PGraphics maze;
+  private final PGraphics output;
+  
+  private final PImage background;
 
   private int[] mazeColumn;
   private int setNumber;
 
   private final LinkedNode root;
-  private final QuadNode tree;
+  private final Grid grid;
 
   Map(int w, int h) {
-    woodTile = loadImage("wood_floor.png");
-    stoneTile = loadImage("stone_wall.png");
+    this.woodTile = loadImage("wood_floor.png");
+    this.stoneTile = loadImage("stone_wall.png");
     this.width = w;
     this.height = h;
     this.floor = generateBackground(woodTile, w, h);
     this.walls = generateBackground(stoneTile, w, h);
+    this.output = createGraphics(width, height);
 
     BoundingBox firstWall = new BoundingBox(new Point(0, 0), WALL_WIDTH_PX, height);
     this.root = new LinkedNode(null, null, firstWall);
@@ -32,8 +36,10 @@ class Map {
     for (setNumber = 0; setNumber < mazeColumn.length; setNumber++)
       mazeColumn[setNumber] = setNumber + 1;
 
-    this.tree = new QuadNode(new BoundingBox(new Point(0, 0), width, height));
+    this.grid = new Grid(width, height, CELL_HEIGHT_PX + WALL_WIDTH_PX);
     this.maze = generateMaze();
+    
+    this.background = generateBackground();
   }
 
   private PGraphics generateBackground(PImage tile, int w, int h) {
@@ -167,6 +173,8 @@ class Map {
     LinkedNode next = new LinkedNode(prev, null, box);
     prev.next = next;
 
+    grid.add(box);
+
     return next;
   }
 
@@ -178,11 +186,14 @@ class Map {
     }
   }
 
-  PImage getBackground() {
-    PGraphics output = createGraphics(width, height);
-    output.beginDraw();
-    floor.beginDraw();
+  public ArrayList<BoundingBox> query(BoundingBox b) {
+    return grid.getColliding(b);
+  }
 
+  PImage generateBackground() {
+    output.beginDraw();
+    output.background(255);
+    floor.beginDraw();
 
     if (DEBUG) {
       output.background(255);
@@ -196,6 +207,10 @@ class Map {
     floor.endDraw();
     output.endDraw();
     return output;
+  }
+  
+  PImage getBackground() {
+    return background;
   }
 }
 
@@ -251,7 +266,7 @@ public class BoundingBox {
   }
 
   //Intersection between two boxes
-  boolean intersection(BoundingBox b) {
+  boolean intersects(BoundingBox b) {
     return (abs(this.anchor.x - b.anchor.x) * 2 < (this.width + b.width)) && (abs(this.anchor.y - b.anchor.y) * 2 < (this.height + this.height));
   }
 }
