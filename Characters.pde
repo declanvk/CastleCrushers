@@ -2,7 +2,6 @@ public class Human {
   final int MOVESPEED=5;
   public float pointX, pointY, size, LegR, ArmR, walk, wd, ht;
   public boolean movingUp, movingDown, movingRight, movingLeft, LegDown, ArmDown, walking;
-  public PImage img;
   public String position, last;
   public Point p;
 
@@ -157,6 +156,8 @@ public class Human {
       rect(14, 15, 4, 11+walk);
       rect(13, 26 + walk, 6, 2);
 
+
+
       // Body
       fill(255);
       beginShape();
@@ -203,6 +204,11 @@ public class Human {
       fill(0);
       triangle(6, 12, 3, 10, 3, 12);
       triangle(12, 12, 15, 10, 15, 12);
+
+      // Sword
+      fill(150);
+      rect(.5, 16-walk, 3, 10);
+      fill(255);
     }
 
     if (pos=="RIGHT") {
@@ -308,7 +314,7 @@ public class Human {
     pushStyle();
     pushMatrix();
     translate(this.pointX, this.pointY);
-    scale(this.size); // I think a scale of 2x or 3x is best but we can discuss
+    scale(this.size); 
 
     if (movingUp || movingLeft || movingDown || movingRight) {
       this.drawPosition(position);
@@ -432,10 +438,5 @@ public class Human {
         walking = true;
       }
     }
-  }
-}
-
-public class Enemy {
-  Enemy() {
   }
 }
