@@ -1,4 +1,4 @@
-Human character; //<>//
+Human character; //<>// //<>//
 Bat bitey;
 Animation anim;
 Map map;
@@ -9,7 +9,7 @@ void setup() {
   character = new Human(100, 100, 1);
   bitey = new Bat(200, 200, .25);
   anim = new Animation();
-  frameRate(60);
+  frameRate(120);
 }
 
 void draw() {
@@ -19,12 +19,19 @@ void draw() {
   println(frameRate);
   background(map.getBackground());
   character.update();
-  BoundingBox chrBox = new BoundingBox(new Point(character.pointX, character.pointY), (int)character.wd, (int)character.ht);
-  println(map.query(chrBox).size());
+  handleCollisions(character, map.query(character.bound));
   character.draw();
-  // bitey.draw();
+   bitey.draw();
 
   //}
+}
+
+void handleCollisions(Human chr, ArrayList<BoundingBox> bs) {
+  rect(chr.bound.anchor.x, chr.bound.anchor.y, chr.bound.width, chr.bound.height);
+  for (BoundingBox b : bs)
+    if (b.intersects(chr.bound)) {
+      rect(b.anchor.x, b.anchor.y, b.width, b.height);
+    }
 }
 
 void keyPressed() {

@@ -55,7 +55,7 @@ public class Grid {
     collidingList.clear();
 
     for (BoundingBox b : queryNearby(e))
-      if (e.intersects(b))
+      if (b.intersects(e))
         collidingList.add(b);
 
     return collidingList;
