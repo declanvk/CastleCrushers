@@ -1,4 +1,5 @@
 Human character; //<>//
+Bat bitey;
 Animation anim;
 Map map;
 int x = 0;
@@ -6,6 +7,7 @@ void setup() {
   size(1210, 610);
   map = new Map(width, height);
   character = new Human(100, 100, 1);
+  bitey = new Bat(200, 200, .25);
   anim = new Animation();
   frameRate(60);
 }
@@ -20,7 +22,8 @@ void draw() {
   BoundingBox chrBox = new BoundingBox(new Point(character.pointX, character.pointY), (int)character.wd, (int)character.ht);
   println(map.query(chrBox).size());
   character.draw();
-  //drawBat();
+  // bitey.draw();
+
   //}
 }
 
