@@ -17,7 +17,6 @@ public class Human {
 
   public void drawPosition(String pos) {
     if (pos=="UP") {
-
       // Legs 
       fill(255);
       rect(5, 23, 4, 10+walk);
@@ -52,7 +51,6 @@ public class Human {
     }
 
     if (pos=="LEFT") {
-
       // Right Arm 
       pushMatrix();
       fill(255);
@@ -158,15 +156,6 @@ public class Human {
       rect(-1, 26 - walk, 6, 2);
       rect(14, 15, 4, 11+walk);
       rect(13, 26 + walk, 6, 2);
-
-      pushMatrix();
-      fill(255);
-      translate(9, 5);
-      translate(0, 19);
-      rotate(LegR);
-      translate(0, -19);
-      rect(0, 18, 4, 10);
-      popMatrix();
 
       // Body
       fill(255);
@@ -342,7 +331,6 @@ public class Human {
         this.pointX=width-this.wd;
         this.position="RIGHT";
       }
-
       //  moving
       if (LegR < -radians(45)) {
         LegDown = false;
@@ -377,7 +365,6 @@ public class Human {
         this.pointX=0;
         this.position="LEFT";
       }
-
       //  moving
       if (LegR < -radians(45)) {
         LegDown = false;
@@ -412,7 +399,6 @@ public class Human {
         this.pointY=0;
         this.position="UP";
       }
-
       if (walking == true) {
         walk -= .3;
       } else {
@@ -434,8 +420,6 @@ public class Human {
         this.pointY=height-this.ht;
         this.position="DOWN";
       }
-
-
       if (walking == true) {
         walk -= .3;
       } else {
