@@ -12,7 +12,7 @@ public class Bat {
     this.wd=sz;
     this.ht=sz;
     this.position="RIGHT";
-    this.last="LEFT";
+    this.last="RIGHT";
   }
 
   public void draw() {
@@ -986,9 +986,7 @@ public class Bat {
 
 
 
-
-
-
+//// KEEP THIS STUFF BC LEFT ISNT WORKING FOR ME AND TRYING TO FIX
 
 
 public void Lbat(int bx, int by, float rB, float sB) {
