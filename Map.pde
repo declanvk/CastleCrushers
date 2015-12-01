@@ -228,8 +228,6 @@ class LinkedNode {
 }
 
 public class BoundingBox {
-  PVector x = new PVector(1, 0), y = new PVector(0, 1);
-
   //Upper left corner point
   PVector anchor;
   int width, height;
@@ -291,14 +289,26 @@ public class BoundingBox {
   PVector center() {
     return new PVector(anchor.x + width / 2, anchor.y + height / 2);
   }
-
+  
+  private final PVector[] axes = {new PVector(1, 0), new PVector(0, 1), new PVector(-1, 0), new PVector(0, -1)};
   PVector overlap(BoundingBox b) {
-    PVector dist = this.center().sub(b.center());
-    float distOnX = dist.dot(x) * x.x, distOnY = dist.dot(y) * y.y;
-    float thisX = this.width / 2, thisY = this.height / 2;
-    float bX = b.width / 2, bY = b.height / 2;
+    PVector dist = b.center().sub(this.center());
+    PVector thisHalfAxis = new PVector(this.width / 2, this.height / 2);
+    PVector bHalfAxis = new PVector(b.width / 2, b.height / 2);
+    
+    PVector[] distOnAxis = new PVector[axes.length];
+    for(int i = 0; i < axes.length; i++) {
+      distOnAxis[i] = axes[i].copy().mult(dist.dot(axes[i]));
+      distOnAxis[i] = distOnAxis[i].add(new PVector(thisHalfAxis.x * axes[i].x, thisHalfAxis.y * axes[i].y));
+      distOnAxis[i] = distOnAxis[i].add(new PVector(bHalfAxis.x * axes[i].x, bHalfAxis.y * axes[i].y));
+    }
+    
 
-    return new PVector((bX + thisX) - distOnX, (bY + thisY) - distOnY);
+    PVector res = distOnAxis[0];
+    for(PVector v: distOnAxis)
+      if(v.magSq() < res.magSq())
+        res = v;
+    return res.mult(-1);
   }
 
   void shift(float dx, float dy) {
