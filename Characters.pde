@@ -53,17 +53,32 @@ public class Human {
 
     if (pos=="LEFT") {
 
-      // Legs 
-
+      // Right Arm 
       pushMatrix();
       fill(255);
-      translate(5, 5);
-      translate(5, 19);
-      rotate(-LegR);
-      translate(-5, -19);
-      rect(5, 18, 4, 10);
+      translate(7, 19);
+      rotate(ArmR);
+      translate(-7, -19);
+      fill(255);
+      rect(10, 19, -7, 3);
+      rect(2, 18, 2, 5);
+      fill(100);
+      beginShape();
+      vertex(2, 18);
+      vertex(1, 12);
+      vertex(3, 8);
+      vertex(3, 18);
+      vertex(2, 18);
+      endShape();
+      beginShape();
+      vertex(4, 18);
+      vertex(5, 12);
+      vertex(3, 8);
+      vertex(3, 18);
+      endShape();
       popMatrix();
 
+      // Legs 
       pushMatrix();
       fill(255);
       translate(7, 5);
@@ -71,6 +86,15 @@ public class Human {
       rotate(LegR);
       translate(0, -19);
       rect(0, 18, 4, 10);
+      popMatrix();
+
+      pushMatrix();
+      fill(255);
+      translate(5, 5);
+      translate(3, 19);
+      rotate(-LegR);
+      translate(-3, -19);
+      rect(3, 18, 4, 10);
       popMatrix();
 
       // Body
@@ -109,12 +133,21 @@ public class Human {
       // Ear Plate
       fill(205, 50, 50);
       ellipse(10, 11, 3, 6);
+
+      // Left Arm 
+      pushMatrix();
+      fill(255);
+      translate(11, 19);
+      rotate(-ArmR);
+      translate(-11, -19);
+      fill(255);
+      rect(10, 19, -7, 3);
+      rect(2, 18, 2, 5);
+      fill(100);
+      popMatrix();
     }
 
     if (pos=="DOWN") {
-
-
-
       // Legs 
       fill(255);
       rect(5, 23, 4, 10+walk);
@@ -185,25 +218,39 @@ public class Human {
 
     if (pos=="RIGHT") {
 
-      // Legs 
-
+      // Legs
       pushMatrix();
       fill(255);
       translate(2, 5);
-      translate(5, 19);
+      translate(3, 19);
       rotate(-LegR);
-      translate(-5, -19);
-      rect(5, 18, 4, 10);
+      translate(-3, -19);
+      rect(3, 18, 4, 10);
+      rect(3, 28, 6, 2);
       popMatrix();
 
       pushMatrix();
       fill(255);
       translate(3, 5);
-      translate(0, 19);
+      translate(3, 19);
       rotate(LegR);
-      translate(0, -19);
-      rect(0, 18, 4, 10);
+      translate(-3, -19);
+      rect(3, 18, 4, 10);
+      rect(3, 28, 6, 2);
       popMatrix();
+
+      // Left Arm 
+      pushMatrix();
+      fill(255);
+      translate(7, 19);
+      rotate(-ArmR);
+      translate(-7, -19);
+      fill(255);
+      rect(6, 19, 7, 3);
+      rect(12, 18, 2, 5);
+      fill(100);
+      popMatrix();
+
       // Body
       fill(255);
       ellipse(7, 20, 10, 15);
@@ -240,6 +287,31 @@ public class Human {
       // Ear Plate
       fill(205, 50, 50);
       ellipse(5, 11, 3, 6);
+
+      // Right Arm 
+      pushMatrix();
+      fill(255);
+      translate(7, 19);
+      rotate(ArmR);
+      translate(-7, -19);
+      fill(255);
+      rect(6, 19, 7, 3);
+      rect(12, 18, 2, 5);
+      fill(100);
+      beginShape();
+      vertex(12, 18);
+      vertex(11, 12);
+      vertex(13, 8);
+      vertex(13, 18);
+      vertex(12, 18);
+      endShape();
+      beginShape();
+      vertex(14, 18);
+      vertex(15, 12);
+      vertex(13, 8);
+      vertex(13, 18);
+      endShape();
+      popMatrix();
     }
   }
 
@@ -270,6 +342,30 @@ public class Human {
         this.pointX=width-this.wd;
         this.position="RIGHT";
       }
+
+      //  moving
+      if (LegR < -radians(45)) {
+        LegDown = false;
+      } 
+      if (LegR > radians(45)) {
+        LegDown = true;
+      }
+      if (LegDown == true) {
+        LegR -= .1;
+      } else {
+        LegR += .1;
+      }
+      if (ArmR < -radians(30)) {
+        ArmDown = false;
+      } 
+      if (ArmR > radians(90)) {
+        ArmDown = true;
+      }
+      if (ArmDown == true) {
+        ArmR -= .12;
+      } else {
+        ArmR += .12;
+      }
     }
 
     if (movingLeft)
@@ -280,6 +376,30 @@ public class Human {
       } else {
         this.pointX=0;
         this.position="LEFT";
+      }
+
+      //  moving
+      if (LegR < -radians(45)) {
+        LegDown = false;
+      } 
+      if (LegR > radians(45)) {
+        LegDown = true;
+      }
+      if (LegDown == true) {
+        LegR -= .1;
+      } else {
+        LegR += .1;
+      }
+      if (ArmR < -radians(30)) {
+        ArmDown = false;
+      } 
+      if (ArmR > radians(90)) {
+        ArmDown = true;
+      }
+      if (ArmDown == true) {
+        ArmR -= .12;
+      } else {
+        ArmR += .12;
       }
     } 
 
