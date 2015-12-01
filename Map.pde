@@ -11,7 +11,7 @@ class Map {
   private final PGraphics floor, walls;
   private final PGraphics maze;
   private final PGraphics output;
-  
+
   private final PImage background;
 
   private int[] mazeColumn;
@@ -37,8 +37,9 @@ class Map {
       mazeColumn[setNumber] = setNumber + 1;
 
     this.grid = new Grid(width, height, CELL_HEIGHT_PX + WALL_WIDTH_PX);
+    grid.add(firstWall);
     this.maze = generateMaze();
-    
+
     this.background = generateBackground();
   }
 
@@ -208,7 +209,7 @@ class Map {
     output.endDraw();
     return output;
   }
-  
+
   PImage getBackground() {
     return background;
   }
@@ -227,6 +228,7 @@ class LinkedNode {
 }
 
 public class BoundingBox {
+  PVector x = new PVector(1, 0), y = new PVector(0, 1);
 
   //Upper left corner point
   Point anchor;
@@ -267,12 +269,46 @@ public class BoundingBox {
 
   //Intersection between two boxes
   boolean intersects(BoundingBox b) {
-    return (abs(this.anchor.x - b.anchor.x) * 2 < (this.width + b.width)) && (abs(this.anchor.y - b.anchor.y) * 2 < (this.height + this.height));
+    return !(b.left() > this.right() || b.right() < this.left() || b.top() > this.bottom() || b.bottom() < this.top());
+  }
+
+  float left() {
+    return this.anchor.x;
+  }
+
+  float right() {
+    return this.anchor.x + this.width;
+  }
+
+  float top() {
+    return this.anchor.y;
+  }
+
+  float bottom() {
+    return this.anchor.y + this.height;
+  }
+
+  PVector center() {
+    return new PVector(anchor.x + width / 2, anchor.y + height / 2);
+  }
+
+  PVector overlap(BoundingBox b) {
+    PVector dist = this.center().sub(b.center());
+    float distOnX = dist.dot(x) * x.x, distOnY = dist.dot(y) * y.y;
+    float thisX = this.width / 2, thisY = this.height / 2;
+    float bX = b.width / 2, bY = b.height / 2;
+
+    return new PVector((bX + thisX) - distOnX, (bY + thisY) - distOnY);
+  }
+
+  void shift(float dx, float dy) {
+    this.anchor.x += dx;
+    this.anchor.y += dy;
   }
 }
 
 public class Point {
-  final float x, y;
+  float x, y;
 
   Point(float x, float y) {
     this.x = x;

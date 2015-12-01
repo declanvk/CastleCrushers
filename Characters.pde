@@ -1,17 +1,15 @@
 public class Human {
-  final int MOVESPEED=5;
-  public float pointX, pointY, size, rotateLeg, rotateArm, wd, ht;
+  final int MOVESPEED = 1;
+  public float size, rotateLeg, rotateArm;
+  public BoundingBox bound;
   public boolean movingUp, movingDown, movingRight, movingLeft;
   public PImage img;
   public String position, last;
   public Point p;
 
   Human(float x, float y, float sz) {
-    this.pointX=x;
-    this.pointY=y;
+    this.bound = new BoundingBox(new Point(x, y), (int)(sz * 18), (int)(sz * 35));
     this.size=sz;
-    this.wd=sz*18;
-    this.ht=sz*35;
     this.rotateLeg=0;
     this.position="RIGHT";
   }
@@ -255,7 +253,7 @@ public class Human {
   public void draw() {
     pushStyle();
     pushMatrix();
-    translate(this.pointX, this.pointY);
+    translate(this.bound.anchor.x, this.bound.anchor.y);
     scale(this.size); // I think a scale of 2x or 3x is best but we can discuss
 
     if (movingUp || movingLeft || movingDown || movingRight) {
@@ -272,43 +270,43 @@ public class Human {
 
     if (movingRight)
     {
-      if (this.pointX+this.wd+MOVESPEED<=width) {
-        this.pointX+=MOVESPEED;
+      if (this.bound.anchor.x + this.bound.width + MOVESPEED <= width) {
+        this.bound.anchor.x += MOVESPEED;
         this.position="RIGHT";
       } else {
-        this.pointX=width-this.wd;
+        this.bound.anchor.x = width - this.bound.width;
         this.position="RIGHT";
       }
     }
 
     if (movingLeft)
     {
-      if (this.pointX-MOVESPEED>=0) {
-        this.pointX-=MOVESPEED;
+      if (this.bound.anchor.x - MOVESPEED >= 0) {
+        this.bound.anchor.x -= MOVESPEED;
         this.position="LEFT";
       } else {
-        this.pointX=0;
+        this.bound.anchor.x = 0;
         this.position="LEFT";
       }
     } 
 
     if (movingUp)
     {
-      if (this.pointY-MOVESPEED>=0) {
-        this.pointY-=MOVESPEED;
+      if (this.bound.anchor.y - MOVESPEED >= 0) {
+        this.bound.anchor.y -= MOVESPEED;
         this.position="UP";
       } else {
-        this.pointY=0;
+        this.bound.anchor.y = 0;
         this.position="UP";
       }
     } 
     if (movingDown)
     {
-      if (this.pointY+this.ht+MOVESPEED<=height) {
-        this.pointY+=MOVESPEED;
+      if (this.bound.anchor.y + this.bound.height + MOVESPEED <= height) {
+        this.bound.anchor.y += MOVESPEED;
         this.position="DOWN";
       } else {
-        this.pointY=height-this.ht;
+        this.bound.anchor.y = height - this.bound.height;
         this.position="DOWN";
       }
     }
