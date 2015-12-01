@@ -29,7 +29,7 @@ class Map {
     this.walls = generateBackground(stoneTile, w, h);
     this.output = createGraphics(width, height);
 
-    BoundingBox firstWall = new BoundingBox(new Point(0, 0), WALL_WIDTH_PX, height);
+    BoundingBox firstWall = new BoundingBox(new PVector(0, 0), WALL_WIDTH_PX, height);
     this.root = new LinkedNode(null, null, firstWall);
 
     this.mazeColumn = new int[h / (CELL_HEIGHT_PX + WALL_WIDTH_PX)];
@@ -71,7 +71,7 @@ class Map {
     int i = 0;
     int num = width / 60;
     do {
-      mazeColumn = processColumnEllers(node, mazeColumn, new Point(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == num - 1);
+      mazeColumn = processColumnEllers(node, mazeColumn, new PVector(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == num - 1);
       while (node.next != null)
         node = node.next;
       i++;
@@ -84,15 +84,15 @@ class Map {
   private void seedColumns(LinkedNode node) {
     for (int y = WALL_WIDTH_PX + CELL_HEIGHT_PX; y < height; y += WALL_WIDTH_PX + CELL_HEIGHT_PX) {
       for (int x = WALL_WIDTH_PX + CELL_HEIGHT_PX; x < width; x += WALL_WIDTH_PX + CELL_HEIGHT_PX) {
-        node = addBox(new Point(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, node);
+        node = addBox(new PVector(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, node);
       }
     }
   }
 
-  private int[] processColumnEllers(LinkedNode prev, int[] column, Point start, boolean end) {
+  private int[] processColumnEllers(LinkedNode prev, int[] column, PVector start, boolean end) {
     LinkedNode node = prev;
-    node = addBox(new Point(start.x, 0), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-    node = addBox(new Point(start.x, height - WALL_WIDTH_PX), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
+    node = addBox(new PVector(start.x, 0), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
+    node = addBox(new PVector(start.x, height - WALL_WIDTH_PX), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
 
     //Union sets
     for (int i = 0; i < column.length - 1; i++) {
@@ -105,7 +105,7 @@ class Map {
           a++;
         }
       } else if (!end || (end && column[i] == column[i + 1])) {//draw wall
-        node = addBox(new Point(start.x, (i + 1) * (CELL_HEIGHT_PX + WALL_WIDTH_PX)), WALL_WIDTH_PX + CELL_HEIGHT_PX - 10, WALL_WIDTH_PX, node);
+        node = addBox(new PVector(start.x, (i + 1) * (CELL_HEIGHT_PX + WALL_WIDTH_PX)), WALL_WIDTH_PX + CELL_HEIGHT_PX - 10, WALL_WIDTH_PX, node);
       }
     }
 
@@ -117,7 +117,7 @@ class Map {
       if (transfer[i] && !end)
         nextColumn[i] = column[i];
       else {
-        node = addBox(new Point(start.x + 0 + CELL_HEIGHT_PX, i * (WALL_WIDTH_PX + CELL_HEIGHT_PX) + 10), WALL_WIDTH_PX, (WALL_WIDTH_PX + CELL_HEIGHT_PX) + -10, node);
+        node = addBox(new PVector(start.x + 0 + CELL_HEIGHT_PX, i * (WALL_WIDTH_PX + CELL_HEIGHT_PX) + 10), WALL_WIDTH_PX, (WALL_WIDTH_PX + CELL_HEIGHT_PX) + -10, node);
       }
     }
 
@@ -169,7 +169,7 @@ class Map {
     return res;
   }
 
-  private LinkedNode addBox(Point p, int w, int h, LinkedNode prev) {
+  private LinkedNode addBox(PVector p, int w, int h, LinkedNode prev) {
     BoundingBox box = new BoundingBox(p, w, h);
     LinkedNode next = new LinkedNode(prev, null, box);
     prev.next = next;
@@ -231,11 +231,11 @@ public class BoundingBox {
   PVector x = new PVector(1, 0), y = new PVector(0, 1);
 
   //Upper left corner point
-  Point anchor;
+  PVector anchor;
   int width, height;
 
-  BoundingBox(Point p, int w, int h) {
-    this.anchor = new Point(p.x, p.y);
+  BoundingBox(PVector p, int w, int h) {
+    this.anchor = new PVector(p.x, p.y);
     this.width = w;
     this.height = h;
   }
@@ -258,13 +258,13 @@ public class BoundingBox {
   }
 
   //Intersection of point and box
-  boolean contains(Point p) {
+  boolean contains(PVector p) {
     return (p.x > this.anchor.x && p.x < this.anchor.x + this.width) && (p.y > this.anchor.y && p.y < this.anchor.y + this.height);
   }
 
   //Box completely contains another box
   boolean contains(BoundingBox b) {
-    return this.contains(b.anchor) && this.contains(new Point(b.anchor.x + b.width, b.anchor.y + b.height));
+    return this.contains(b.anchor) && this.contains(new PVector(b.anchor.x + b.width, b.anchor.y + b.height));
   }
 
   //Intersection between two boxes
@@ -304,14 +304,5 @@ public class BoundingBox {
   void shift(float dx, float dy) {
     this.anchor.x += dx;
     this.anchor.y += dy;
-  }
-}
-
-public class Point {
-  float x, y;
-
-  Point(float x, float y) {
-    this.x = x;
-    this.y = y;
   }
 }

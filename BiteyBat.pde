@@ -3,7 +3,7 @@ public class Bat {
   public boolean movingUp, movingDown, movingRight, movingLeft;
   public float pointX, pointY, size, wd, ht;
   public String position, last;
-  public Point p;
+  public PVector p;
 
   Bat(float x, float y, float sz) {
     this.pointX=x;

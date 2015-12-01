@@ -5,12 +5,10 @@ public class Human {
 
   public BoundingBox bound;
 
-  public PImage img;
   public String position, last;
-  public Point p;
 
   Human(float x, float y, float sz) {
-    this.bound = new BoundingBox(new Point(x, y), (int)(sz * 18), (int)(sz * 35));
+    this.bound = new BoundingBox(new PVector(x, y), (int)(sz * 18), (int)(sz * 35));
     this.size=sz;
     this.position="RIGHT";
   }
