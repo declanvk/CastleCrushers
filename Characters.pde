@@ -1,7 +1,7 @@
 public class Human {
   final int MOVESPEED=5;
-  public float pointX, pointY, size, rotateLeg, rotateArm, wd, ht;
-  public boolean movingUp, movingDown, movingRight, movingLeft;
+  public float pointX, pointY, size, LegR, ArmR, walk, wd, ht;
+  public boolean movingUp, movingDown, movingRight, movingLeft, LegDown, ArmDown, walking;
   public PImage img;
   public String position, last;
   public Point p;
@@ -12,35 +12,24 @@ public class Human {
     this.size=sz;
     this.wd=sz*18;
     this.ht=sz*35;
-    this.rotateLeg=0;
     this.position="RIGHT";
   }
 
   public void drawPosition(String pos) {
     if (pos=="UP") {
+
       // Legs 
-
-      pushMatrix();
       fill(255);
-      translate(0, 5);
-      translate(5, 19);
-      rotate(-rotateLeg);
-      translate(-5, -19);
-      rect(5, 18, 4, 10);
-      popMatrix();
+      rect(5, 23, 4, 10+walk);
+      rect(9, 23, 4, 10-walk);
 
-      pushMatrix();
-      fill(255);
-      translate(9, 5);
-      translate(0, 19);
-      rotate(rotateLeg);
-      translate(0, -19);
-      rect(0, 18, 4, 10);
-      popMatrix();
-
+      // Arms
+      rect(0, 15, 4, 11-walk);
+      rect(-1, 26 - walk, 6, 2);
+      rect(14, 15, 4, 11+walk);
+      rect(13, 26 + walk, 6, 2);
 
       // Body
-      fill(255);
       beginShape();
       vertex(0, 15);
       vertex(18, 15);
@@ -70,7 +59,7 @@ public class Human {
       fill(255);
       translate(5, 5);
       translate(5, 19);
-      rotate(-rotateLeg);
+      rotate(-LegR);
       translate(-5, -19);
       rect(5, 18, 4, 10);
       popMatrix();
@@ -79,7 +68,7 @@ public class Human {
       fill(255);
       translate(7, 5);
       translate(0, 19);
-      rotate(rotateLeg);
+      rotate(LegR);
       translate(0, -19);
       rect(0, 18, 4, 10);
       popMatrix();
@@ -124,22 +113,24 @@ public class Human {
 
     if (pos=="DOWN") {
 
-      // Legs 
 
-      pushMatrix();
+
+      // Legs 
       fill(255);
-      translate(0, 5);
-      translate(5, 19);
-      rotate(-rotateLeg);
-      translate(-5, -19);
-      rect(5, 18, 4, 10);
-      popMatrix();
+      rect(5, 23, 4, 10+walk);
+      rect(9, 23, 4, 10-walk);
+
+      // Arms
+      rect(0, 15, 4, 11-walk);
+      rect(-1, 26 - walk, 6, 2);
+      rect(14, 15, 4, 11+walk);
+      rect(13, 26 + walk, 6, 2);
 
       pushMatrix();
       fill(255);
       translate(9, 5);
       translate(0, 19);
-      rotate(rotateLeg);
+      rotate(LegR);
       translate(0, -19);
       rect(0, 18, 4, 10);
       popMatrix();
@@ -200,7 +191,7 @@ public class Human {
       fill(255);
       translate(2, 5);
       translate(5, 19);
-      rotate(-rotateLeg);
+      rotate(-LegR);
       translate(-5, -19);
       rect(5, 18, 4, 10);
       popMatrix();
@@ -209,7 +200,7 @@ public class Human {
       fill(255);
       translate(3, 5);
       translate(0, 19);
-      rotate(rotateLeg);
+      rotate(LegR);
       translate(0, -19);
       rect(0, 18, 4, 10);
       popMatrix();
@@ -301,6 +292,18 @@ public class Human {
         this.pointY=0;
         this.position="UP";
       }
+
+      if (walking == true) {
+        walk -= .3;
+      } else {
+        walk += .3;
+      }
+      if (walk < -1) {
+        walking = false;
+      } 
+      if (walk > 1) {
+        walking = true;
+      }
     } 
     if (movingDown)
     {
@@ -310,6 +313,19 @@ public class Human {
       } else {
         this.pointY=height-this.ht;
         this.position="DOWN";
+      }
+
+
+      if (walking == true) {
+        walk -= .3;
+      } else {
+        walk += .3;
+      }
+      if (walk < -1) {
+        walking = false;
+      } 
+      if (walk > 1) {
+        walking = true;
       }
     }
   }
