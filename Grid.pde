@@ -21,15 +21,18 @@ public class Grid {
         grid[x][y].container.clear();
   }
 
-  public void add(BoundingBox e) {
+  public boolean add(BoundingBox e) {
     int topLeftX = Math.max(0, (int) (e.anchor.x / cellSize));
     int topLeftY = Math.max(0, (int) (e.anchor.y / cellSize));
     int bottomRightX = Math.min(cols-1, (int) ((e.anchor.x + e.width -1) / cellSize));
     int bottomRightY = Math.min(rows-1, (int) ((e.anchor.y + e.height -1) / cellSize));
-
+    
+    boolean res = true;
     for (int x = topLeftX; x <= bottomRightX; x++)
       for (int y = topLeftY; y <= bottomRightY; y++)
-        grid[x][y].container.add(e);
+        res &= grid[x][y].container.add(e);
+    
+    return res;
   }
 
   private ArrayList<BoundingBox> queryList = new ArrayList<BoundingBox>();

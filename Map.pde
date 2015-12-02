@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 private final boolean DEBUG = false;
 
 class Map {
@@ -5,9 +7,13 @@ class Map {
   private final int WALL_WIDTH_PX = 10;
 
 
+  private final int MAZE_MODE_NEWEST = 0;
+  private final int MAZE_MODE_RANDOM = 1;
+  private final int MAZE_MODE_OLDEST = 2;
+
   private final PImage woodTile, stoneTile;
 
-  private final int width, height;
+  private final int width, height, rows, columns;
   private final PGraphics floor, walls;
   private final PGraphics maze;
   private final PGraphics output;
@@ -17,7 +23,7 @@ class Map {
   private int[] mazeColumn;
   private int setNumber;
 
-  private final LinkedNode root;
+  private final ArrayList<BoundingBox> drawList;
   private final Grid grid;
 
   Map(int w, int h) {
@@ -25,25 +31,25 @@ class Map {
     this.stoneTile = loadImage("stone_wall.png");
     this.width = w;
     this.height = h;
-    this.floor = generateBackground(woodTile, w, h);
-    this.walls = generateBackground(stoneTile, w, h);
+    this.rows = h / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
+    this.columns = w / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
+    this.floor = generateTiling(woodTile, w, h);
+    this.walls = generateTiling(stoneTile, w, h);
     this.output = createGraphics(width, height);
 
-    BoundingBox firstWall = new BoundingBox(new PVector(0, 0), WALL_WIDTH_PX, height);
-    this.root = new LinkedNode(null, null, firstWall);
+    this.drawList = new ArrayList<BoundingBox>();
 
     this.mazeColumn = new int[h / (CELL_HEIGHT_PX + WALL_WIDTH_PX)];
     for (setNumber = 0; setNumber < mazeColumn.length; setNumber++)
       mazeColumn[setNumber] = setNumber + 1;
 
     this.grid = new Grid(width, height, CELL_HEIGHT_PX + WALL_WIDTH_PX);
-    grid.add(firstWall);
     this.maze = generateMaze();
 
     this.background = generateBackground();
   }
 
-  private PGraphics generateBackground(PImage tile, int w, int h) {
+  private PGraphics generateTiling(PImage tile, int w, int h) {
     PGraphics pg = createGraphics(w, h);
     int numX = w % tile.width == 0 ? w / tile.width : (w / tile.width) + 1;
     int numY = h % tile.height == 0 ? h / tile.height : (h / tile.height) + 1;
@@ -62,129 +68,36 @@ class Map {
   private PGraphics generateMaze() {
     PGraphics maze = createGraphics(width, height);
     color fullAlpha = color(0, 0, 255);
-    LinkedNode node = root;
 
-    seedColumns(node);
-    while (node.next != null)
-      node = node.next;
+    seedColumns(drawList);
+    addWalls(drawList);
+    growingTree(drawList, new PVector(0, 0), MAZE_MODE_NEWEST);
 
-    int i = 0;
-    int num = width / 60;
-    do {
-      mazeColumn = processColumnEllers(node, mazeColumn, new PVector(i * (CELL_HEIGHT_PX + WALL_WIDTH_PX) + WALL_WIDTH_PX, 0), i == num - 1);
-      while (node.next != null)
-        node = node.next;
-      i++;
-    } while (i < num);
-
-    drawMaze(root, maze, fullAlpha);
+    drawMaze(drawList, maze, fullAlpha);
     return maze;
   }
 
-  private void seedColumns(LinkedNode node) {
-    for (int y = WALL_WIDTH_PX + CELL_HEIGHT_PX; y < height; y += WALL_WIDTH_PX + CELL_HEIGHT_PX) {
-      for (int x = WALL_WIDTH_PX + CELL_HEIGHT_PX; x < width; x += WALL_WIDTH_PX + CELL_HEIGHT_PX) {
-        node = addBox(new PVector(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-      }
-    }
+  private void addWalls(ArrayList<BoundingBox> drawList) {
+    addBox(new PVector(0, 0), WALL_WIDTH_PX, this.height, drawList);
+    addBox(new PVector(this.width - WALL_WIDTH_PX, 0), WALL_WIDTH_PX, this.height, drawList);
+    addBox(new PVector(WALL_WIDTH_PX, 0), this.width - 2 * WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
+    addBox(new PVector(WALL_WIDTH_PX, this.height - WALL_WIDTH_PX), this.width - 2 * WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
   }
 
-  private int[] processColumnEllers(LinkedNode prev, int[] column, PVector start, boolean end) {
-    LinkedNode node = prev;
-    node = addBox(new PVector(start.x, 0), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-    node = addBox(new PVector(start.x, height - WALL_WIDTH_PX), CELL_HEIGHT_PX + WALL_WIDTH_PX, WALL_WIDTH_PX, node);
-
-    //Union sets
-    for (int i = 0; i < column.length - 1; i++) {
-      if (column[i] != column[i + 1] && random(1) > 0.5) {
-        int val = column[i + 1];
-        int a = 1;
-        while (i + a < column.length) {
-          if (column[i + a] == val)
-            column[i + a] = column[i];
-          a++;
-        }
-      } else if (!end || (end && column[i] == column[i + 1])) {//draw wall
-        node = addBox(new PVector(start.x, (i + 1) * (CELL_HEIGHT_PX + WALL_WIDTH_PX)), WALL_WIDTH_PX + CELL_HEIGHT_PX - 10, WALL_WIDTH_PX, node);
-      }
-    }
-
-    int[] nextColumn = new int[column.length];
-    //Decide which parts of each set continue to next row and add walls where it does not
-    //TODO make sure each set gets at least one
-    boolean[] transfer = determineContinue(column);
-    for (int i = 0; i < column.length; i++) {
-      if (transfer[i] && !end)
-        nextColumn[i] = column[i];
-      else {
-        node = addBox(new PVector(start.x + 0 + CELL_HEIGHT_PX, i * (WALL_WIDTH_PX + CELL_HEIGHT_PX) + 10), WALL_WIDTH_PX, (WALL_WIDTH_PX + CELL_HEIGHT_PX) + -10, node);
-      }
-    }
-
-    for (int i = 0; i < nextColumn.length; i++)
-      if (nextColumn[i] == 0)
-        nextColumn[i] = setNumber++;
-    return nextColumn;
+  private void seedColumns(ArrayList<BoundingBox> drawList) {
+    for (int y = WALL_WIDTH_PX + CELL_HEIGHT_PX; y < height; y += WALL_WIDTH_PX + CELL_HEIGHT_PX)
+      for (int x = WALL_WIDTH_PX + CELL_HEIGHT_PX; x < width; x += WALL_WIDTH_PX + CELL_HEIGHT_PX)
+        addBox(new PVector(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
   }
 
-  private boolean[] determineContinue(int[] col) {
-    boolean[] res = new boolean[col.length];
-
-    if (DEBUG) {
-      //print array
-      print("{");
-      for (int i = 0; i < res.length; i++)
-        print((col[i] >= 10 ? col[i] : " " + col[i]) + (i == res.length - 1 ? "}\n" : ", "));
-    }
-
-    int start = 0, val = 0, end = 0, j = 0;
-    for (int i = 0; i < res.length; i++) {
-      j = 0;
-      start = i;
-      val = col[start];
-      while (start + j < res.length && col[start + j] == val) {
-        end = start + j;
-        j++;
-      }
-
-      int lim = 1 + round(abs(randomGaussian()));
-
-      if (DEBUG && lim > 1)
-        println(lim);
-
-      for (int k = 0; k < lim; k++)
-        res[(int) random(start, end)] = true;
-
-      i = end;
-    }
-
-    if (DEBUG) {
-      //print array
-      print("{");
-      for (int i = 0; i < res.length; i++)
-        print((res[i] ? " t" : " f") + (i == res.length - 1 ? "}\n" : ", "));
-    }
-
-
-    return res;
-  }
-
-  private LinkedNode addBox(PVector p, int w, int h, LinkedNode prev) {
+  private boolean addBox(PVector p, int w, int h, ArrayList<BoundingBox> drawList) {
     BoundingBox box = new BoundingBox(p, w, h);
-    LinkedNode next = new LinkedNode(prev, null, box);
-    prev.next = next;
-
-    grid.add(box);
-
-    return next;
+    return drawList.add(box) && grid.add(box);
   }
 
-  private void drawMaze(LinkedNode start, PGraphics pg, color c) {
-    LinkedNode node = start;
-    while (node != null) {
-      node.content.draw(pg, c);
-      node = node.next;
-    }
+  private void drawMaze(ArrayList<BoundingBox> drawList, PGraphics pg, color c) {
+    for (BoundingBox b : drawList)
+      b.draw(pg, c);
   }
 
   public ArrayList<BoundingBox> query(BoundingBox b) {
@@ -213,17 +126,110 @@ class Map {
   PImage getBackground() {
     return background;
   }
-}
 
-class LinkedNode {
-  LinkedNode prev, next;
+  private final ArrayList<PVector> directions = new ArrayList<PVector>();
+  {
+    directions.add(new PVector(1, 0));
+    directions.add(new PVector(0, 1)); 
+    directions.add(new PVector(-1, 0)); 
+    directions.add(new PVector(0, -1));
+  }
 
-  final BoundingBox content;
+  private void growingTree(ArrayList<BoundingBox> drawList, PVector start, int mazeMode) {
+    boolean[][] horizWalls = new boolean[this.columns][this.rows - 1];
+    boolean[][] vertWalls = new boolean[this.columns - 1][this.rows];
+    for (int i = 0; i < horizWalls.length; i++)
+      for (int j = 0; j < horizWalls[i].length; j++)
+        horizWalls[i][j] = true;
 
-  LinkedNode(LinkedNode p, LinkedNode n, BoundingBox b) {
-    this.prev = p;
-    this.next = n;
-    this.content = b;
+    for (int i = 0; i < vertWalls.length; i++)
+      for (int j = 0; j < vertWalls[i].length; j++)
+        vertWalls[i][j] = true;
+
+
+    int[][] grid = new int[columns][rows];
+    ArrayList<PVector> cells = new ArrayList<PVector>();
+    cells.add(start);
+    grid[(int) start.x][(int) start.y]++;
+
+    int index;
+    PVector current, neighbor;
+    while (cells.size() > 0) {
+      index = choose(cells.size(), mazeMode);
+      current = cells.get(index);
+
+      Collections.shuffle(directions);
+      for (PVector direction : directions) {
+        neighbor = PVector.add(current, direction);
+        if (neighbor.x < 0 || neighbor.y < 0 || neighbor.x >= columns || neighbor.y >= rows)
+          continue;
+        else if ( grid[(int)neighbor.x][(int)neighbor.y] == 0) {
+          grid[(int) neighbor.x][(int) neighbor.y]++;
+          cells.add(neighbor);
+          index = -1;
+
+          if (direction.x == 1)
+            vertWalls[(int) current.x][(int) current.y] = false;
+          else if (direction.x == -1)
+            vertWalls[(int) neighbor.x][(int) neighbor.y] = false;
+          else if (direction.y == 1)
+            horizWalls[(int) current.x][(int) current.y] = false;
+          else
+            horizWalls[(int) neighbor.x][(int) neighbor.y] = false;
+
+          break;
+        }
+      }
+
+      if (index > -1)
+        cells.remove(index);
+    }
+
+    //Add walls
+    for (int x = 0; x < horizWalls.length; x++) {
+      for (int y = 0; y < horizWalls[x].length; y++) {
+        if (horizWalls[x][y]) {
+          addBox(
+            new PVector(
+            (WALL_WIDTH_PX) + x * (WALL_WIDTH_PX + CELL_HEIGHT_PX), 
+            (WALL_WIDTH_PX + CELL_HEIGHT_PX) + y * (WALL_WIDTH_PX + CELL_HEIGHT_PX)
+            ), 
+            CELL_HEIGHT_PX, 
+            WALL_WIDTH_PX, 
+            drawList
+            );
+        }
+      }
+    }
+
+    for (int x = 0; x < vertWalls.length; x++) {
+      for (int y = 0; y < vertWalls[x].length; y++) {
+        if (vertWalls[x][y]) {
+          addBox(
+            new PVector(
+            (WALL_WIDTH_PX + CELL_HEIGHT_PX) + x * (WALL_WIDTH_PX + CELL_HEIGHT_PX), 
+            (WALL_WIDTH_PX) + y * (WALL_WIDTH_PX + CELL_HEIGHT_PX)
+            ), 
+            WALL_WIDTH_PX, 
+            CELL_HEIGHT_PX, 
+            drawList
+            );
+        }
+      }
+    }
+  }
+
+  private int choose(int length, int mazeMode) {
+    switch(mazeMode) {
+    case MAZE_MODE_OLDEST:
+      return 0;
+    case MAZE_MODE_RANDOM:
+      return (int) random(length);
+    case MAZE_MODE_NEWEST:
+      return length - 1;
+    default:
+      return -1;
+    }
   }
 }
 
@@ -289,24 +295,24 @@ public class BoundingBox {
   PVector center() {
     return new PVector(anchor.x + width / 2, anchor.y + height / 2);
   }
-  
+
   private final PVector[] axes = {new PVector(1, 0), new PVector(0, 1), new PVector(-1, 0), new PVector(0, -1)};
   PVector overlap(BoundingBox b) {
     PVector dist = b.center().sub(this.center());
     PVector thisHalfAxis = new PVector(this.width / 2, this.height / 2);
     PVector bHalfAxis = new PVector(b.width / 2, b.height / 2);
-    
+
     PVector[] distOnAxis = new PVector[axes.length];
-    for(int i = 0; i < axes.length; i++) {
+    for (int i = 0; i < axes.length; i++) {
       distOnAxis[i] = axes[i].copy().mult(dist.dot(axes[i]));
       distOnAxis[i] = distOnAxis[i].add(new PVector(thisHalfAxis.x * axes[i].x, thisHalfAxis.y * axes[i].y));
       distOnAxis[i] = distOnAxis[i].add(new PVector(bHalfAxis.x * axes[i].x, bHalfAxis.y * axes[i].y));
     }
-    
+
 
     PVector res = distOnAxis[0];
-    for(PVector v: distOnAxis)
-      if(v.magSq() < res.magSq())
+    for (PVector v : distOnAxis)
+      if (v.magSq() < res.magSq())
         res = v;
     return res.mult(-1);
   }

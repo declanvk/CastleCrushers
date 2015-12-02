@@ -1,4 +1,4 @@
-Human character; //<>// //<>//
+Human character; //<>// //<>// //<>//
 Bat bitey;
 Animation anim;
 Map map;
@@ -13,17 +13,17 @@ void setup() {
 }
 
 void draw() {
-  //if (frameCount < 672) {
-  // anim.draw();
-  // } else {
   //println(frameRate);
-  background(map.getBackground());
-  character.update();
-  handleCollisions(character, map.query(character.bound));
-  character.draw();
-  //bitey.draw();
-
-  //}
+  if (frameCount < 0) {
+    anim.draw();
+  } else {
+    //println(frameRate);
+    background(map.getBackground());
+    character.update();
+    handleCollisions(character, map.query(character.bound));
+    character.draw();
+    //bitey.draw();
+  }
 }
 
 void handleCollisions(Human chr, ArrayList<BoundingBox> bs) {
@@ -54,6 +54,19 @@ void keyPressed() {
   case 40:
     character.movingDown=true;
     break;
+  case 87:
+    character.MOVESPEED++;
+    println(character.MOVESPEED);
+    break;
+  case 83:
+    character.MOVESPEED--;
+    println(character.MOVESPEED);
+    break;
+  case 65:
+    println(frameRate);
+    break;
+  default:
+    println(keyCode, key);
   }
 }
 
