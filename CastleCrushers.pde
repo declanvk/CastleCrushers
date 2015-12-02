@@ -6,7 +6,7 @@ int x = 0;
 void setup() {
   size(1210, 610);
   map = new Map(width, height);
-  character = new Human(100, 100, 1);
+  character = new Human(25, 20, 1);
   bitey = new Bat(200, 200, .25);
   anim = new Animation();
   frameRate(120);
