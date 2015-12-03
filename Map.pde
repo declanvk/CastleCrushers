@@ -3,8 +3,8 @@ import java.util.Collections;
 private final boolean DEBUG = false;
 
 class Map {
-  private final int CELL_HEIGHT_PX = 50;
-  private final int WALL_WIDTH_PX = 10;
+  public static final int CELL_HEIGHT_PX = 50;
+  public static final int WALL_WIDTH_PX = 10;
 
 
   private final int MAZE_MODE_NEWEST = 0;
@@ -20,13 +20,11 @@ class Map {
 
   private final PImage background;
 
-  private int[] mazeColumn;
-  private int setNumber;
-
   private final ArrayList<BoundingBox> drawList;
   private final Grid grid;
+  private final PVector startPos;
 
-  Map(int w, int h) {
+  Map(int w, int h, PVector start) {
     this.woodTile = loadImage("wood_floor.png");
     this.stoneTile = loadImage("stone_wall.png");
     this.width = w;
@@ -39,13 +37,10 @@ class Map {
 
     this.drawList = new ArrayList<BoundingBox>();
 
-    this.mazeColumn = new int[h / (CELL_HEIGHT_PX + WALL_WIDTH_PX)];
-    for (setNumber = 0; setNumber < mazeColumn.length; setNumber++)
-      mazeColumn[setNumber] = setNumber + 1;
-
+    this.startPos = start;
     this.grid = new Grid(width, height, CELL_HEIGHT_PX + WALL_WIDTH_PX);
     this.maze = generateMaze();
-
+    
     this.background = generateBackground();
   }
 
@@ -71,7 +66,7 @@ class Map {
 
     seedColumns(drawList);
     addWalls(drawList);
-    growingTree(drawList, new PVector(0, 0), MAZE_MODE_RANDOM);
+    growingTree(drawList, startPos, MAZE_MODE_RANDOM);
 
     drawMaze(drawList, maze, fullAlpha);
     return maze;
@@ -151,9 +146,6 @@ class Map {
     ArrayList<PVector> cells = new ArrayList<PVector>();
     cells.add(start);
     grid[(int) start.x][(int) start.y]++;
-    
-    int maxDist = 0;
-    PVector maxCell = new PVector();
 
     int index;
     PVector current, neighbor;
@@ -182,11 +174,6 @@ class Map {
 
           break;
         }
-      }
-      
-      if(cells.size() > maxDist) {
-        maxDist = cells.size();
-        maxCell = current;
       }
       
       if (index > -1) {
@@ -234,10 +221,6 @@ class Map {
         }
       }
     }
-  }
-  
-  private void markFarthest(PVector p, ArrayList<BoundingBox> drawList) {
-    
   }
 
   private int choose(int length, int mazeMode) {

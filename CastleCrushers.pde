@@ -1,4 +1,4 @@
-//Oscar Jones //<>//
+//Oscar Jones //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -7,11 +7,13 @@ Human character; //<>// //<>// //<>//
 Bat bitey;
 Animation anim;
 Map map;
+PVector start;
 int x = 0;
 void setup() {
   size(1210, 610);
-  map = new Map(width, height);
-  character = new Human(25, 20, 1);
+  start = new PVector(0, (int) random(0, 10));
+  map = new Map(width, height, start);
+  character = new Human(Map.WALL_WIDTH_PX + 15, Map.WALL_WIDTH_PX + 10 + (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) * start.y, 1);
   bitey = new Bat(200, 200, .25);
   anim = new Animation();
   frameRate(60);

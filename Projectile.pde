@@ -1,7 +1,7 @@
 public class Projectile {
-  
-     private int x, y, speedX;
-     private boolean visible;
+
+  private int x, y, speedX;
+  private boolean visible;
 
   public Projectile(int startX, int startY) {
     x = startX;
@@ -9,12 +9,12 @@ public class Projectile {
     speedX = 7;
     visible = true;
   }
-  
-  public void update(){
+
+  public void update() {
 
     x += speedX;
     if (x > 800) {
-       visible = false;
+      visible = false;
     }
   }
 
@@ -35,5 +35,4 @@ public class Projectile {
   public void setVisible(boolean visible) {
     this.visible = visible;
   }
-
 }
