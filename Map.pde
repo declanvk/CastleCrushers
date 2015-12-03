@@ -85,8 +85,8 @@ class Map {
   }
 
   private void seedColumns(ArrayList<BoundingBox> drawList) {
-    for (int y = WALL_WIDTH_PX + CELL_HEIGHT_PX; y < height; y += WALL_WIDTH_PX + CELL_HEIGHT_PX)
-      for (int x = WALL_WIDTH_PX + CELL_HEIGHT_PX; x < width; x += WALL_WIDTH_PX + CELL_HEIGHT_PX)
+    for (int y = WALL_WIDTH_PX + CELL_HEIGHT_PX; y < height - WALL_WIDTH_PX; y += WALL_WIDTH_PX + CELL_HEIGHT_PX)
+      for (int x = WALL_WIDTH_PX + CELL_HEIGHT_PX; x < width - WALL_WIDTH_PX; x += WALL_WIDTH_PX + CELL_HEIGHT_PX)
         addBox(new PVector(x, y), WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
   }
 
@@ -151,6 +151,9 @@ class Map {
     ArrayList<PVector> cells = new ArrayList<PVector>();
     cells.add(start);
     grid[(int) start.x][(int) start.y]++;
+    
+    int maxDist = 0;
+    PVector maxCell = new PVector();
 
     int index;
     PVector current, neighbor;
@@ -180,11 +183,25 @@ class Map {
           break;
         }
       }
-
-      if (index > -1)
+      
+      if(cells.size() > maxDist) {
+        maxDist = cells.size();
+        maxCell = current;
+      }
+      
+      if (index > -1) {
         cells.remove(index);
+      }
     }
-
+    
+    //Mark farthest
+    //addBox(
+    //  new PVector(
+    //  WALL_WIDTH_PX + maxCell.x*(WALL_WIDTH_PX + CELL_HEIGHT_PX) + (CELL_HEIGHT_PX - WALL_WIDTH_PX) / 2,
+    //  WALL_WIDTH_PX + maxCell.y*(WALL_WIDTH_PX + CELL_HEIGHT_PX) + (CELL_HEIGHT_PX - WALL_WIDTH_PX) / 2
+    //  ), 
+    //  WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
+    
     //Add walls
     for (int x = 0; x < horizWalls.length; x++) {
       for (int y = 0; y < horizWalls[x].length; y++) {
@@ -217,6 +234,10 @@ class Map {
         }
       }
     }
+  }
+  
+  private void markFarthest(PVector p, ArrayList<BoundingBox> drawList) {
+    
   }
 
   private int choose(int length, int mazeMode) {
@@ -312,7 +333,7 @@ public class BoundingBox {
 
     PVector res = distOnAxis[0];
     for (PVector v : distOnAxis)
-      if (v.magSq() < res.magSq())
+      if (v.magSq() <= res.magSq())
         res = v;
     return res.mult(-1);
   }

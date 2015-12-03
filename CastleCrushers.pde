@@ -22,7 +22,7 @@ void draw() {
     character.update();
     handleCollisions(character, map.query(character.bound));
     character.draw();
-    //bitey.draw();
+    bitey.draw();
   }
 }
 
