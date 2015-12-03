@@ -1,16 +1,16 @@
 public class Bat {
   final int ENEMYSPEED=2;
   public boolean movingUp, movingDown, movingRight, movingLeft;
-  public float pointX, pointY, size, wd, ht;
+  public float size, wd, ht;
   public String position, last;
 
-  public PVector p;
+  public PVector p = new PVector();
 
 
 
   Bat(float x, float y, float sz) {
-    this.pointX=x;
-    this.pointY=y;
+    this.p.x=x;
+    this.p.y=y;
     this.size=sz;
     this.wd=sz;
     this.ht=sz;
@@ -21,7 +21,7 @@ public class Bat {
   public void draw() {
     pushStyle();
     pushMatrix();
-    translate(this.pointX, this.pointY);
+    translate(this.p.x, this.p.y);
     scale(this.size); 
 
     if (movingUp || movingLeft || movingDown || movingRight) {

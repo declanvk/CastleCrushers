@@ -71,7 +71,7 @@ class Map {
 
     seedColumns(drawList);
     addWalls(drawList);
-    growingTree(drawList, new PVector(0, 0), MAZE_MODE_NEWEST);
+    growingTree(drawList, new PVector(0, 0), MAZE_MODE_RANDOM);
 
     drawMaze(drawList, maze, fullAlpha);
     return maze;

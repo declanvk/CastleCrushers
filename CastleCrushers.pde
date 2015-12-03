@@ -19,7 +19,7 @@ void setup() {
 
 void draw() {
 
-  if (frameCount < 685) {
+  if (frameCount < .685) {
     anim.draw();
   } else {
     background(map.getBackground());
