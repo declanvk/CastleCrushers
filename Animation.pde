@@ -31,23 +31,22 @@ public class Animation {
     fill(78, 155, 16);
     rect(0, height/2, width, height/2);
     path();
-    tree(694,320, 0.3, 65,120,80);
+    tree(694, 320, 0.3, 65, 120, 80);
     castle(520, 310);
-    tree(59,340, 0.7, 106,118,94);
-    tree(206,388, 1.0, 99,120,52);
+    tree(59, 340, 0.7, 106, 118, 94);
+    tree(206, 388, 1.0, 99, 120, 52);
     Knight();
     animate();
     clouds();
     for (int x = 0; x < num; x++) {
       cloudX[x] += .1;
     }
-    tree(365,490, 2.2, 56,117,72);
-    tree(1014,335, 0.5, 98,136,43);
-    tree(811,400, 1.2, 80,172,49);
-    tree(455,350, 0.6, 65,138,76);
-    tree(888,470, 2.0, 68,132,95);
-    tree(1108,440, 1.6, 66,178,93); 
-
+    tree(365, 490, 2.2, 56, 117, 72);
+    tree(1014, 335, 0.5, 98, 136, 43);
+    tree(811, 400, 1.2, 80, 172, 49);
+    tree(455, 350, 0.6, 65, 138, 76);
+    tree(888, 470, 2.0, 68, 132, 95);
+    tree(1108, 440, 1.6, 66, 178, 93);
   }
 
   public void Knight() {
@@ -238,9 +237,8 @@ public class Animation {
       dir.y=-1;
       sz-=0.08;
       turned = true;
-      Loc.y = Loc.y + dir.y*time*.3;
-      Loc.x = Loc.x + dir.x*time*.2;
-      frameRate(20);
+      Loc.y = Loc.y + dir.y*time*.05;
+      Loc.x = Loc.x + dir.x*time*.25;
       if (walking == true) {
         walk -= .3;
       } else {
@@ -254,6 +252,7 @@ public class Animation {
       }
     } else if (Loc.y <= 385) {
       sz = 0;
+      frameRate(60);
 
       noLoop();
     }
@@ -296,49 +295,47 @@ public class Animation {
 
       popMatrix();
     }
-          stroke(0);
-
-  }
-  
-  public void tree(int trex, float trey, float sz, int tR, int tG, int tB) {
-   //tx is X value of upper left corner tree trunk
-   float treeW=15;    //width of tree trunk
-   float steppe=40;    //X spacing of tree branches/triangles
-   noStroke();
-   pushMatrix();
-     translate(trex, trey);
-     scale(sz);
-     fill(100, 86, 70); //tree trunk color
-     rect(0,0, treeW,60);
-     fill(tR,tG,tB); //tree top color
-     for(int j=0; j<5; j++) {
-       float treeY= j*-20;    //Y spacing of tree branches/triangles
-       triangle(0-steppe,15+treeY, treeW/2,treeY-30, treeW+steppe,15+treeY);  
-       trey=trey-treeY; 
-       steppe=3*steppe/4;
-     } 
-   popMatrix();
-   stroke(0);
-  }
-  
-  public void path() {
-    for (int i=0; i<100; i++) {
-        noStroke();
-        fill(143,114,82);
-        ellipse(613+0.3*i,400+1.7*i, 20+0.6*i, 5);
-        rectMode(CENTER);
-        rect(6.1*i, 600, 10, 60);
-        rectMode(CORNER);
-        pushMatrix();
-          translate(603,569);
-          rotate(-radians(0.9*i));
-          rect(0,0,5,78); 
-        popMatrix();
-    }
-    rect(563,536, 50,50);
-    fill(78, 155, 16); // grass green
-    arc(565,536,75,67, 0,3.2);
     stroke(0);
   }
-  
+
+  public void tree(int trex, float trey, float sz, int tR, int tG, int tB) {
+    //tx is X value of upper left corner tree trunk
+    float treeW=15;    //width of tree trunk
+    float steppe=40;    //X spacing of tree branches/triangles
+    noStroke();
+    pushMatrix();
+    translate(trex, trey);
+    scale(sz);
+    fill(100, 86, 70); //tree trunk color
+    rect(0, 0, treeW, 60);
+    fill(tR, tG, tB); //tree top color
+    for (int j=0; j<5; j++) {
+      float treeY= j*-20;    //Y spacing of tree branches/triangles
+      triangle(0-steppe, 15+treeY, treeW/2, treeY-30, treeW+steppe, 15+treeY);  
+      trey=trey-treeY; 
+      steppe=3*steppe/4;
+    } 
+    popMatrix();
+    stroke(0);
+  }
+
+  public void path() {
+    for (int i=0; i<100; i++) {
+      noStroke();
+      fill(143, 114, 82);
+      ellipse(613+0.3*i, 400+1.7*i, 20+0.6*i, 5);
+      rectMode(CENTER);
+      rect(6.1*i, 600, 10, 60);
+      rectMode(CORNER);
+      pushMatrix();
+      translate(603, 569);
+      rotate(-radians(0.9*i));
+      rect(0, 0, 5, 78); 
+      popMatrix();
+    }
+    rect(563, 536, 50, 50);
+    fill(78, 155, 16); // grass green
+    arc(565, 536, 75, 67, 0, 3.2);
+    stroke(0);
+  }
 }
