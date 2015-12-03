@@ -28,6 +28,8 @@ void draw() {
     character.update();
     handleCollisions(character, map.query(character.bound));
     character.draw();
+    
+    bitey.update();
     bitey.draw();
   }
 }
