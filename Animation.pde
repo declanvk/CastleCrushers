@@ -50,6 +50,7 @@ public class Animation {
   }
 
   public void Knight() {
+    pushStyle();
     strokeWeight(.3);
     pushMatrix();
     translate(Loc.x, Loc.y);
@@ -204,6 +205,7 @@ public class Animation {
       popMatrix();
     }
     popMatrix();
+    popStyle();
   }
 
   public void animate() {
@@ -259,11 +261,13 @@ public class Animation {
   }
 
   public void castle(float a, float b) {
+    pushStyle();
     pushMatrix();
     translate(a, b);
     scale(3);
     fill(200);
     stroke(0);
+    strokeWeight(.3);
     for (int x = 0; x < 60; x+=10) {
       for (int y = 0; y < 30; y+=5) {
         rect(x, y, 10, 5);
@@ -280,9 +284,11 @@ public class Animation {
     fill(200, 0, 0);
     triangle(10, -15, 30, -30, 50, -15);
     popMatrix();
+    popStyle();
   }
 
   public void clouds() {
+    pushStyle();
     noStroke();
     fill(255);
     for (int i = 0; i < num; i++) {
@@ -296,9 +302,11 @@ public class Animation {
       popMatrix();
     }
     stroke(0);
+    popStyle();
   }
 
   public void tree(int trex, float trey, float sz, int tR, int tG, int tB) {
+    pushStyle();
     //tx is X value of upper left corner tree trunk
     float treeW=15;    //width of tree trunk
     float steppe=40;    //X spacing of tree branches/triangles
@@ -317,9 +325,11 @@ public class Animation {
     } 
     popMatrix();
     stroke(0);
+    popStyle();
   }
 
   public void path() {
+    pushStyle();
     for (int i=0; i<100; i++) {
       noStroke();
       fill(143, 114, 82);
@@ -337,5 +347,6 @@ public class Animation {
     fill(78, 155, 16); // grass green
     arc(565, 536, 75, 67, 0, 3.2);
     stroke(0);
+    popStyle();
   }
 }

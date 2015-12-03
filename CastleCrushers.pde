@@ -14,16 +14,15 @@ void setup() {
 
 void draw() {
 
- // if (frameCount < 685) {
-  //anim.draw();
-  //} else {
-  println(frameRate);
-  background(map.getBackground());
-  character.update();
-  handleCollisions(character, map.query(character.bound));
-  character.draw();
-  bitey.draw();
-  //}
+  if (frameCount < 685) {
+    anim.draw();
+  } else {
+    background(map.getBackground());
+    character.update();
+    handleCollisions(character, map.query(character.bound));
+    character.draw();
+    bitey.draw();
+  }
 }
 
 void handleCollisions(Human chr, ArrayList<BoundingBox> bs) {
