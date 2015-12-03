@@ -1,3 +1,8 @@
+//Oscar Jones //<>//
+//Justis Mackaou
+//Zachary Richardson
+//Declan Kelly
+
 Human character; //<>// //<>// //<>//
 Bat bitey;
 Animation anim;
