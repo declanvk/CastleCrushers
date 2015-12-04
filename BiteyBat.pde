@@ -15,7 +15,7 @@ public class Bat
   {
     this.size=sz;
 
-    this.bound = new BoundingBox(new PVector(x, y), (int)(sz * 10), (int)(sz * 10));
+    this.bound = new BoundingBox(new PVector(x, y), (int)(sz * 100), (int)(sz * 100));
     this.wd=sz;
     this.ht=sz;
     this.position="RIGHT";
@@ -29,10 +29,9 @@ public class Bat
   {
     //fill(255);
     //rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
-    
-    pushStyle();
+      pushStyle();
     pushMatrix();
-    translate(this.bound.anchor.x, this.bound.anchor.y);
+    translate(this.bound.anchor.x+this.size*50, this.bound.anchor.y+this.size*50);
     scale(this.size); 
 
     this.drawPosition(position);

@@ -39,6 +39,7 @@ void draw() {
     {
      Projectile b=bullets.get(i);
      b.draw();
+     handleCollisions(bitey, b);
      b.update();
     }
   }
@@ -64,6 +65,18 @@ void handleCollisions(Human chr, Bat bt) {
   }
   popStyle();
 }
+
+void handleCollisions(Bat bt, Projectile bl) {
+  pushStyle();
+  if (bt.bound.intersects(bl.bound)) {
+    //some code that happens when the bat hits the character. logic works correctly, tested with noLoop()
+    //noLoop();
+    bitey = new Bat(random(0, width), random(0, height), .25);
+    //this code spawns a new bat in a random location once bitey hits the character
+  }
+  popStyle();
+}
+
 
 void keyPressed() {
   switch(keyCode) {

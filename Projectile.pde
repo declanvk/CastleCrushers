@@ -1,28 +1,34 @@
 public class Projectile {
 
   private float x, y, speedX;
-  private boolean visible;
-  
+  //private boolean visible;
+
   public BoundingBox bound;
+  
+  public String last;
 
   public Projectile() {
-    this.bound = new BoundingBox(character.bound.anchor,10,5);
+    this.bound = new BoundingBox(character.bound.anchor, 10, 5);
     speedX = 4;
-    visible = true;
+    last=character.last;
+    //visible = true;
   }
-  
-  public void draw(){
+
+  public void draw() {
     pushStyle();
-    fill(255,255,0);
+    fill(255, 255, 0);
     rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
     popStyle();
   }
 
   public void update() {
-    this.bound.anchor.x += speedX;
-    if (this.bound.anchor.x > width+5) {
-      this.visible = false;
-    }
+    if (this.last=="RIGHT")
+      this.bound.anchor.x += speedX;
+    else if (this.last=="LEFT")
+    this.bound.anchor.x-=speedX;
+    else if(this.last=="UP")
+    this.bound.anchor.y-=speedX;
+    else if(this.last=="DOWN")
+    this.bound.anchor.y+=speedX;
   }
-
 }
