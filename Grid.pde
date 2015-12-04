@@ -36,7 +36,7 @@ public class Grid {
   }
 
   private ArrayList<BoundingBox> queryList = new ArrayList<BoundingBox>();
-  public ArrayList<BoundingBox> queryNearby(BoundingBox e) {
+  public ArrayList<BoundingBox> query(BoundingBox e) {
     queryList.clear();
 
     int topLeftX = Math.max(0, (int) (e.anchor.x / cellSize));
@@ -57,7 +57,7 @@ public class Grid {
   public ArrayList<BoundingBox> getColliding(BoundingBox e) {
     collidingList.clear();
 
-    for (BoundingBox b : queryNearby(e))
+    for (BoundingBox b : query(e))
       if (b.intersects(e))
         collidingList.add(b);
 

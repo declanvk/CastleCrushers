@@ -21,11 +21,7 @@ public class Bat
     this.ht=sz;
     this.position="RIGHT";
   }
-
-
-
-
-
+  
   public void draw() 
   {
     fill(255);
