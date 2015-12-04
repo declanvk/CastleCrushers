@@ -1,4 +1,4 @@
-//Oscar Jones //<>// //<>// //<>// //<>//
+//Oscar Jones //<>// //<>// //<>// //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -31,7 +31,7 @@ void draw() {
   //685
   if (frameCount < .685) {
     anim.draw();
-  } else if (true) {
+  } else if (!gameOver) {
     background(map.getBackground());
     character.update();
     handleCollisions(character, map.query(character.bound));
