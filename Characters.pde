@@ -8,8 +8,9 @@ public class Human {
   public String position, last;
 
   Human(float x, float y, float sz) {
-    this.bound = new BoundingBox(new PVector(x, y), (int)(sz * 18), (int)(sz * 35));
     this.size=sz;
+    this.bound = new BoundingBox(new PVector(x, y), (int)(sz * 18), (int)(sz * 35));
+
     this.position="RIGHT";
   }
 
@@ -46,6 +47,7 @@ public class Human {
     }
     popMatrix();
     popStyle();
+
   }
 
   public void update() {
