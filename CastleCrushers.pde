@@ -1,4 +1,4 @@
-//Oscar Jones //<>// //<>//
+//Oscar Jones //<>// //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -20,8 +20,8 @@ void setup() {
 }
 
 void draw() {
-
-  if (frameCount < .685) {
+  //685
+  if (frameCount < 685) {
     anim.draw();
   } else {
     background(map.getBackground());
@@ -34,13 +34,9 @@ void draw() {
 
 void handleCollisions(Human chr, ArrayList<BoundingBox> bs) {
   pushStyle();
-  rect(chr.bound.anchor.x, chr.bound.anchor.y, chr.bound.width, chr.bound.height);
   for (BoundingBox b : bs)
     if (b.intersects(chr.bound)) {
       PVector proj = b.overlap(chr.bound);
-      PVector center = b.center();
-      rect(b.anchor.x, b.anchor.y, b.width, b.height);
-      line(center.x, center.y, center.x + proj.x, center.y + proj.y);
       chr.bound.shift(proj.x, proj.y);
     }
   popStyle();

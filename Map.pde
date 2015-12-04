@@ -1,5 +1,7 @@
 import java.util.Collections;
 
+//http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap Growing Tree
+
 private final boolean DEBUG = false;
 
 class Map {
@@ -10,6 +12,8 @@ class Map {
   private final int MAZE_MODE_NEWEST = 0;
   private final int MAZE_MODE_RANDOM = 1;
   private final int MAZE_MODE_OLDEST = 2;
+
+  private final int mode = MAZE_MODE_RANDOM;
 
   private final PImage woodTile, stoneTile;
 
@@ -153,6 +157,8 @@ class Map {
       index = choose(cells.size(), mazeMode);
       current = cells.get(index);
 
+
+
       Collections.shuffle(directions);
       for (PVector direction : directions) {
         neighbor = PVector.add(current, direction);
@@ -175,20 +181,12 @@ class Map {
           break;
         }
       }
-      
+
       if (index > -1) {
         cells.remove(index);
       }
     }
-    
-    //Mark farthest
-    //addBox(
-    //  new PVector(
-    //  WALL_WIDTH_PX + maxCell.x*(WALL_WIDTH_PX + CELL_HEIGHT_PX) + (CELL_HEIGHT_PX - WALL_WIDTH_PX) / 2,
-    //  WALL_WIDTH_PX + maxCell.y*(WALL_WIDTH_PX + CELL_HEIGHT_PX) + (CELL_HEIGHT_PX - WALL_WIDTH_PX) / 2
-    //  ), 
-    //  WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
-    
+
     //Add walls
     for (int x = 0; x < horizWalls.length; x++) {
       for (int y = 0; y < horizWalls[x].length; y++) {
