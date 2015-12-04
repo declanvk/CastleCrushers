@@ -9,7 +9,7 @@ Animation anim;
 Map map;
 ArrayList<Projectile> bullets = new ArrayList<Projectile>();
 PVector start;
-int x = 0;
+int x = 0, numBats=5;
 void setup() {
   size(1210, 610);
   start = new PVector(0, (int) random(0, 10));
@@ -17,18 +17,12 @@ void setup() {
   character = new Human(Map.WALL_WIDTH_PX + 15, Map.WALL_WIDTH_PX + 10 + (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) * start.y, 1);
 
 
-  for (int i=0; i<5; i++)
+  for (int i=0; i<numBats; i++)
   {
     biteys.add(new Bat(.25));
   }
 
-  //  
 
-  //while (implCir(character.bound.anchor.x, character.bound.anchor.y, 500, bitey.bound.anchor.x, bitey.bound.anchor.y)<0)
-  //  bitey = new Bat(random(0+100, width-100), random(0+100, height-100)+character.bound.anchor.y, .25);
-
-
-  //going to have to figure out what the best way to handle random placement is
   anim = new Animation();
   frameRate(60);
 }
@@ -37,7 +31,7 @@ void draw() {
   //685
   if (frameCount < .685) {
     anim.draw();
-  } else if (!gameOver) {
+  } else if (true) {
     background(map.getBackground());
     character.update();
     handleCollisions(character, map.query(character.bound));
