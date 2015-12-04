@@ -7,7 +7,7 @@ public class Projectile {
   
   public String last;
 
-  public Projectile() {
+  public Projectile(Human character) {
     this.bound = new BoundingBox(character.bound.anchor, 10, 5);
     speedX = 4;
     last=character.last;

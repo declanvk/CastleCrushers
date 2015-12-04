@@ -1,6 +1,6 @@
 public class Bat 
 {
-  final float ENEMYSPEED=character.MOVESPEED/2;
+  final float ENEMYSPEED;
   public boolean movingUp, movingDown, movingRight, movingLeft;
   public float size, wd, ht;
   public String position, last;
@@ -9,24 +9,27 @@ public class Bat
   public PVector dir=new PVector();
 
   public BoundingBox bound;
+  private Human character;
 
 
-  Bat(float sz) 
+  Bat(float sz, Human ch) 
   {
     this.size=sz;
-    this.bound = new BoundingBox(new PVector(random(100,1100), random(100,500)), (int)(sz * 100), (int)(sz * 100));
-    
-    
+    this.character = ch;
+    this.ENEMYSPEED = ch.MOVESPEED;
+    this.bound = new BoundingBox(new PVector(random(100, 1100), random(100, 500)), (int)(sz * 100), (int)(sz * 100));
+
+
     this.wd=sz;
     this.ht=sz;
     this.position="RIGHT";
   }
-  
+
   public void draw() 
   {
     fill(255);
     rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
-      pushStyle();
+    pushStyle();
     pushMatrix();
     translate(this.bound.anchor.x+this.size*50, this.bound.anchor.y+this.size*50);
     scale(this.size); 

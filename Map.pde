@@ -24,11 +24,12 @@ class Map {
 
   private final PImage background;
 
-  private final ArrayList<BoundingBox> drawList;
   private final Grid grid;
+  
+  private final ArrayList<BoundingBox> drawList;
   private final PVector startPos;
 
-  Map(int w, int h, PVector start) {
+  Map(int w, int h, PVector start, Grid g) {
     this.woodTile = loadImage("wood_floor.png");
     this.stoneTile = loadImage("stone_wall.png");
     this.width = w;
@@ -42,7 +43,7 @@ class Map {
     this.drawList = new ArrayList<BoundingBox>();
 
     this.startPos = start;
-    this.grid = new Grid(width, height, CELL_HEIGHT_PX + WALL_WIDTH_PX);
+    this.grid = g;
     this.maze = generateMaze();
     
     this.background = generateBackground();

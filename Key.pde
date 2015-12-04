@@ -1,8 +1,10 @@
 public class Key {
+  final BoundingBox bound;
   PVector pos = new PVector();
   float szk = 0;
   
   Key(float x, float y, float sz) {
+    this.bound = new BoundingBox(new PVector(x, y), 10, 10);
     this.pos.x=x;
     this.pos.y = y;
     this.szk = sz;
@@ -14,6 +16,7 @@ public class Key {
     pushMatrix();
     translate(pos.x, pos.y);
     scale(szk);
+    rect(0,0, 20, 20);
     rectMode(CENTER);
     fill(255, 207, 64); //gold color
     rect(0, 0, 14, 100);
