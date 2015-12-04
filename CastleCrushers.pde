@@ -7,6 +7,7 @@ Human character; //<>// //<>// //<>//
 Bat bitey;
 Animation anim;
 Map map;
+ArrayList<Projectile> bullets = new ArrayList<Projectile>();
 PVector start;
 int x = 0;
 void setup() {
@@ -14,7 +15,8 @@ void setup() {
   start = new PVector(0, (int) random(0, 10));
   map = new Map(width, height, start);
   character = new Human(Map.WALL_WIDTH_PX + 15, Map.WALL_WIDTH_PX + 10 + (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) * start.y, 1);
-  bitey = new Bat(random(100, 300)+character.bound.anchor.x, random(100, 300)+character.bound.anchor.y, .25);
+  bitey = new Bat(random(-100, 100)+character.bound.anchor.x, random(-100, 100)+character.bound.anchor.y, .25);
+  //going to have to figure out what the best way to handle random placement is
   anim = new Animation();
   frameRate(60);
 }
@@ -32,6 +34,13 @@ void draw() {
     bitey.update();
     handleCollisions(character, bitey);
     bitey.draw();
+    
+    for(int i=0; i<bullets.size();i++)
+    {
+     Projectile b=bullets.get(i);
+     b.draw();
+     b.update();
+    }
   }
 }
 
@@ -99,6 +108,9 @@ void keyReleased() {
     break;
   case 40:
     character.movingDown=false;
+    break;
+  case 81: //q
+    bullets.add(new Projectile());
     break;
   }
 }
