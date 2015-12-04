@@ -52,7 +52,7 @@ void draw() {
       for (int j=0; j<biteys.size(); j++)
       {
         Bat bt=biteys.get(j);
-        handleCollisions(bt, b, j);
+        handleCollisions(bt, b, j, i);
       }
       b.draw();
     }
@@ -80,10 +80,14 @@ void handleCollisions(Human chr, Bat bt, int batIndex) {
   popStyle();
 }
 
-void handleCollisions(Bat bt, Projectile bl, int batIndex) {
+void handleCollisions(Bat bt, Projectile bl, int batIndex, int bulIndex) {
   pushStyle();
-  if (bt.bound.intersects(bl.bound)) {
+  if (bt.bound.intersects(bl.bound) && bullets.get(bulIndex).bound.width!=0) {
     biteys.set(batIndex, new Bat(.25));
+    
+    bullets.get(bulIndex).bound.width = 0;
+    bullets.get(bulIndex).bound.height = 0;
+
   }
   popStyle();
 }
