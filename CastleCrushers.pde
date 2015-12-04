@@ -1,4 +1,4 @@
-//Oscar Jones //<>// //<>// //<>// //<>// //<>//
+//Oscar Jones //<>// //<>// //<>// //<>// //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -9,7 +9,7 @@ Animation anim;
 Map map;
 ArrayList<Projectile> bullets = new ArrayList<Projectile>();
 PVector start;
-int x = 0;
+int x = 0, numBats=5;
 void setup() {
   size(1210, 610);
   start = new PVector(0, (int) random(0, 10));
@@ -17,18 +17,12 @@ void setup() {
   character = new Human(Map.WALL_WIDTH_PX + 15, Map.WALL_WIDTH_PX + 10 + (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) * start.y, 1);
 
 
-  for (int i=0; i<5; i++)
+  for (int i=0; i<numBats; i++)
   {
     biteys.add(new Bat(.25));
   }
 
-  //  
 
-  //while (implCir(character.bound.anchor.x, character.bound.anchor.y, 500, bitey.bound.anchor.x, bitey.bound.anchor.y)<0)
-  //  bitey = new Bat(random(0+100, width-100), random(0+100, height-100)+character.bound.anchor.y, .25);
-
-
-  //going to have to figure out what the best way to handle random placement is
   anim = new Animation();
   frameRate(60);
 }
@@ -40,7 +34,7 @@ void draw() {
   } else if (!gameOver) {
     background(map.getBackground());
     character.update();
-    handleCollisions(character, map.query(character.bound));
+    handleCollisions(character, map.grid.query(character.bound));
     character.draw();
 
     for (int i=0; i<biteys.size(); i++)
@@ -58,7 +52,7 @@ void draw() {
       for (int j=0; j<biteys.size(); j++)
       {
         Bat bt=biteys.get(j);
-        handleCollisions(bt, b, j);
+        handleCollisions(bt, b, j, i);
       }
       b.draw();
     }
@@ -86,10 +80,14 @@ void handleCollisions(Human chr, Bat bt, int batIndex) {
   popStyle();
 }
 
-void handleCollisions(Bat bt, Projectile bl, int batIndex) {
+void handleCollisions(Bat bt, Projectile bl, int batIndex, int bulIndex) {
   pushStyle();
-  if (bt.bound.intersects(bl.bound)) {
+  if (bt.bound.intersects(bl.bound) && bullets.get(bulIndex).bound.width!=0) {
     biteys.set(batIndex, new Bat(.25));
+    
+    bullets.get(bulIndex).bound.width = 0;
+    bullets.get(bulIndex).bound.height = 0;
+
   }
   popStyle();
 }

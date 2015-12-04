@@ -24,9 +24,6 @@ public class Level {
     this.projectiles = new ArrayList<Projectile>();
     this.keys = new ArrayList<Key>(NUM_KEYS);
     this.numKeysCollected = 0;
-    
-    randomKeys(keys);
-    randomBats(bats);
   }
 
   public void update() {
@@ -57,7 +54,5 @@ public class Level {
         PVector proj = b.overlap(character.bound);
         character.bound.shift(proj.x, proj.y);
       }
-      
-    for (BoundingBox)
   }
 }

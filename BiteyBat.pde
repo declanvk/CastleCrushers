@@ -1,6 +1,6 @@
 public class Bat 
 {
-  final float ENEMYSPEED=.5;
+  final float ENEMYSPEED=character.MOVESPEED/2;
   public boolean movingUp, movingDown, movingRight, movingLeft;
   public float size, wd, ht;
   public String position, last;

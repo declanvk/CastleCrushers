@@ -1,17 +1,32 @@
 public class Key {
-  private final int HEIGHT_PX = 10, WIDTH_PX = 10;
-
-  BoundingBox bound;
-
-  public Key(PVector p) {
-    this.bound = new BoundingBox(p, HEIGHT_PX, WIDTH_PX);
+  PVector pos = new PVector();
+  float szk = 0;
+  
+  Key(float x, float y, float sz) {
+    this.pos.x=x;
+    this.pos.y = y;
+    this.szk = sz;
   }
 
   public void draw() {
     pushStyle();
+    noStroke();
     pushMatrix();
-    translate(bound.anchor.x, bound.anchor.y);
-    rect(0, 0, bound.width, bound.height);
+    translate(pos.x, pos.y);
+    scale(szk);
+    rectMode(CENTER);
+    fill(255, 207, 64); //gold color
+    rect(0, 0, 14, 100);
+    rectMode(CORNER);
+    rect(7, 42, 20, 7);
+    rect(7, 30, 14, 6);
+    rect(7, 16, 20, 7);
+    for (int i=0; i<=550; i++) {
+      float x, y;
+      x=24*cos(i/4)*cos(radians(i));
+      y=24*cos(i/4)*sin(radians(i));
+      ellipse(x, y-75, 2, 2);
+    }
     popMatrix();
     popStyle();
   }
