@@ -11,11 +11,12 @@ public class Bat
   public BoundingBox bound;
 
 
-  Bat(float x, float y, float sz) 
+  Bat(float sz) 
   {
     this.size=sz;
-
-    this.bound = new BoundingBox(new PVector(x, y), (int)(sz * 100), (int)(sz * 100));
+    this.bound = new BoundingBox(new PVector(random(100,1100), random(100,500)), (int)(sz * 100), (int)(sz * 100));
+    
+    
     this.wd=sz;
     this.ht=sz;
     this.position="RIGHT";
@@ -27,8 +28,8 @@ public class Bat
 
   public void draw() 
   {
-    //fill(255);
-    //rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
+    fill(255);
+    rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
       pushStyle();
     pushMatrix();
     translate(this.bound.anchor.x+this.size*50, this.bound.anchor.y+this.size*50);

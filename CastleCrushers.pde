@@ -2,9 +2,9 @@
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
-
+boolean gameOver=false;
 Human character; //<>// //<>// //<>//
-Bat bitey;
+ArrayList<Bat> biteys = new ArrayList<Bat>();
 Animation anim;
 Map map;
 ArrayList<Projectile> bullets = new ArrayList<Projectile>();
@@ -15,7 +15,19 @@ void setup() {
   start = new PVector(0, (int) random(0, 10));
   map = new Map(width, height, start);
   character = new Human(Map.WALL_WIDTH_PX + 15, Map.WALL_WIDTH_PX + 10 + (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) * start.y, 1);
-  bitey = new Bat(random(-100, 100)+character.bound.anchor.x, random(-100, 100)+character.bound.anchor.y, .25);
+
+
+  for (int i=0; i<5; i++)
+  {
+    biteys.add(new Bat(.25));
+  }
+
+  //  
+
+  //while (implCir(character.bound.anchor.x, character.bound.anchor.y, 500, bitey.bound.anchor.x, bitey.bound.anchor.y)<0)
+  //  bitey = new Bat(random(0+100, width-100), random(0+100, height-100)+character.bound.anchor.y, .25);
+
+
   //going to have to figure out what the best way to handle random placement is
   anim = new Animation();
   frameRate(60);
@@ -25,23 +37,34 @@ void draw() {
   //685
   if (frameCount < .685) {
     anim.draw();
-  } else {
+  } else if (!gameOver) {
     background(map.getBackground());
     character.update();
     handleCollisions(character, map.query(character.bound));
     character.draw();
 
-    bitey.update();
-    handleCollisions(character, bitey);
-    bitey.draw();
-    
-    for(int i=0; i<bullets.size();i++)
+    for (int i=0; i<biteys.size(); i++)
     {
-     Projectile b=bullets.get(i);
-     b.draw();
-     handleCollisions(bitey, b);
-     b.update();
+      Bat b=biteys.get(i);
+      b.update();
+      handleCollisions(character, b, i);
+      b.draw();
     }
+
+    for (int i=0; i<bullets.size(); i++)
+    {
+      Projectile b=bullets.get(i);
+      b.update();
+      for (int j=0; j<biteys.size(); j++)
+      {
+        Bat bt=biteys.get(j);
+        handleCollisions(bt, b, j);
+      }
+      b.draw();
+    }
+  }
+  else{
+    background(255,0,0);
   }
 }
 
@@ -55,24 +78,18 @@ void handleCollisions(Human chr, ArrayList<BoundingBox> bs) {
   popStyle();
 }
 
-void handleCollisions(Human chr, Bat bt) {
+void handleCollisions(Human chr, Bat bt, int batIndex) {
   pushStyle();
   if (bt.bound.intersects(chr.bound)) {
-    //some code that happens when the bat hits the character. logic works correctly, tested with noLoop()
-    //noLoop();
-    bitey = new Bat(random(0, width), random(0, height), .25);
-    //this code spawns a new bat in a random location once bitey hits the character
+    gameOver=true;
   }
   popStyle();
 }
 
-void handleCollisions(Bat bt, Projectile bl) {
+void handleCollisions(Bat bt, Projectile bl, int batIndex) {
   pushStyle();
   if (bt.bound.intersects(bl.bound)) {
-    //some code that happens when the bat hits the character. logic works correctly, tested with noLoop()
-    //noLoop();
-    bitey = new Bat(random(0, width), random(0, height), .25);
-    //this code spawns a new bat in a random location once bitey hits the character
+    biteys.set(batIndex, new Bat(.25));
   }
   popStyle();
 }
@@ -126,4 +143,9 @@ void keyReleased() {
     bullets.add(new Projectile());
     break;
   }
+}
+
+
+float implCir(float cx, float cy, float r, float x, float y) {
+  return (x-cx)*(x-cx)+(y-cy)*(y-cy)-r*r;
 }
