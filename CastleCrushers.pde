@@ -1,15 +1,15 @@
-//Oscar Jones //<>// //<>// //<>// //<>// //<>//
+//Oscar Jones //<>// //<>// //<>// //<>// //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
-boolean gameOver=false;
+boolean gameOver=false, livesVisible;
 Human character; //<>// //<>// //<>//
 ArrayList<Bat> biteys = new ArrayList<Bat>();
 Animation anim;
 Map map;
 ArrayList<Projectile> bullets = new ArrayList<Projectile>();
 PVector start;
-int x = 0, numBats=5;
+int x = 0, numBats=5, livesSize=0;
 void setup() {
   size(1210, 610);
   start = new PVector(0, (int) random(0, 10));
@@ -33,6 +33,26 @@ void draw() {
     anim.draw();
   } else if (!gameOver) {
     background(map.getBackground());
+
+    if (livesVisible)
+    {
+      pushStyle();
+      pushMatrix();
+      translate(character.bound.anchor.x, character.bound.anchor.y);
+      if (livesSize<50)
+        scale(livesSize);
+      else
+        scale(101-livesSize);
+      fill(200, 50, 10);
+      textSize(10);
+      text(character.lives+" lives left!", 0, 0);
+      popMatrix();
+      popStyle();
+      livesSize++;
+      if (livesSize>100)
+        livesVisible=false;
+    }
+
     character.update();
     handleCollisions(character, map.query(character.bound));
     character.draw();
@@ -56,9 +76,14 @@ void draw() {
       }
       b.draw();
     }
-  }
-  else{
-    background(255,0,0);
+  } else {
+    background(255, 0, 0);
+    color c=color(random(255), random(255), random(255));
+    fill(c);
+    textSize(50);
+    text("GAME OVER", 200, height/2);
+    if(frameCount%60==0)
+    c=color(random(255), random(255), random(255));
   }
 }
 
@@ -75,7 +100,14 @@ void handleCollisions(Human chr, ArrayList<BoundingBox> bs) {
 void handleCollisions(Human chr, Bat bt, int batIndex) {
   pushStyle();
   if (bt.bound.intersects(chr.bound)) {
-    gameOver=true;
+    biteys.set(batIndex, new Bat(.25));
+    character.lives--;
+
+    livesVisible=true;
+    livesSize=1;
+
+    if (character.lives<=0)
+      gameOver=true;
   }
   popStyle();
 }
@@ -83,11 +115,10 @@ void handleCollisions(Human chr, Bat bt, int batIndex) {
 void handleCollisions(Bat bt, Projectile bl, int batIndex, int bulIndex) {
   pushStyle();
   if (bt.bound.intersects(bl.bound) && bullets.get(bulIndex).bound.width!=0) {
+
     biteys.set(batIndex, new Bat(.25));
-    
     bullets.get(bulIndex).bound.width = 0;
     bullets.get(bulIndex).bound.height = 0;
-
   }
   popStyle();
 }
