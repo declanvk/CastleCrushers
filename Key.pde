@@ -1,22 +1,18 @@
 public class Key {
   final BoundingBox bound;
-  PVector pos = new PVector();
-  float szk = 0;
-  
-  Key(float x, float y, float sz) {
-    this.bound = new BoundingBox(new PVector(x, y), 10, 10);
-    this.pos.x=x;
-    this.pos.y = y;
-    this.szk = sz;
+  private final float SCALE = 0.25;
+
+  Key(float x, float y) {
+    this.bound = new BoundingBox(new PVector(x, y), (int)(60 * SCALE), (int)(160 * SCALE));
   }
 
   public void draw() {
     pushStyle();
     noStroke();
     pushMatrix();
-    translate(pos.x, pos.y);
-    scale(szk);
-    rect(0,0, 20, 20);
+    translate(bound.anchor.x, bound.anchor.y);
+    scale(SCALE);
+    translate(30, 105);
     rectMode(CENTER);
     fill(255, 207, 64); //gold color
     rect(0, 0, 14, 100);

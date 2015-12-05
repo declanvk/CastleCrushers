@@ -13,7 +13,7 @@ class Map {
   private final int MAZE_MODE_RANDOM = 1;
   private final int MAZE_MODE_OLDEST = 2;
 
-  private final int mode = MAZE_MODE_RANDOM;
+  private final int mode = MAZE_MODE_NEWEST;
 
   private final PImage woodTile, stoneTile;
 
@@ -25,9 +25,12 @@ class Map {
   private final PImage background;
 
   private final Grid grid;
-  
+
   private final ArrayList<BoundingBox> drawList;
   private final PVector startPos;
+
+  //TODO change
+  public final HashMap<PVector, ArrayList<PVector>> adjacency;
 
   Map(int w, int h, PVector start, Grid g) {
     this.woodTile = loadImage("wood_floor.png");
@@ -42,11 +45,20 @@ class Map {
 
     this.drawList = new ArrayList<BoundingBox>();
 
+    this.adjacency = new HashMap<PVector, ArrayList<PVector>>();
+    initializeAdjacency(adjacency, rows, columns);
+
     this.startPos = start;
     this.grid = g;
     this.maze = generateMaze();
-    
+
     this.background = generateBackground();
+  }
+
+  private void initializeAdjacency(HashMap<PVector, ArrayList<PVector>> adj, int rows, int cols) {
+    for (int y = 0; y < rows; y++)
+      for (int x = 0; x < cols; x++)
+        adj.put(new PVector(x, y), new ArrayList<PVector>());
   }
 
   private PGraphics generateTiling(PImage tile, int w, int h) {
@@ -71,7 +83,7 @@ class Map {
 
     seedColumns(drawList);
     addWalls(drawList);
-    growingTree(drawList, startPos, MAZE_MODE_RANDOM);
+    growingTree(drawList, startPos, mode);
 
     drawMaze(drawList, maze, fullAlpha);
     return maze;
@@ -154,8 +166,6 @@ class Map {
       index = choose(cells.size(), mazeMode);
       current = cells.get(index);
 
-
-
       Collections.shuffle(directions);
       for (PVector direction : directions) {
         neighbor = PVector.add(current, direction);
@@ -165,6 +175,9 @@ class Map {
           grid[(int) neighbor.x][(int) neighbor.y]++;
           cells.add(neighbor);
           index = -1;
+
+          adjacency.get(current).add(neighbor);
+          adjacency.get(neighbor).add(current);
 
           if (direction.x == 1)
             vertWalls[(int) current.x][(int) current.y] = false;
@@ -229,5 +242,70 @@ class Map {
     default:
       return -1;
     }
+  }
+
+  public ArrayList<PVector> astar(PVector start, PVector goal, HashMap<PVector, ArrayList<PVector>> adj) {
+    ArrayList<PVector> closed = new ArrayList<PVector>();
+    ArrayList<PVector> open = new ArrayList<PVector>();
+    open.add(start);
+
+    HashMap<PVector, PVector> cameFrom = new HashMap<PVector, PVector>();
+    HashMap<PVector, Float> gScore = new HashMap<PVector, Float>();
+    gScore.put(start, 0.0);
+
+    HashMap<PVector, Float> fScore = new HashMap<PVector, Float>();
+    fScore.put(start, hueristic(start, goal));
+
+    PVector current;
+    while (open.size() > 0) {
+      current = findMin(open, fScore);
+      if (current.equals(goal))
+        return reconstruct(cameFrom, goal);
+
+      open.remove(current);
+      closed.add(current);
+      float possibleGScore = 0.0;
+      for (PVector neighbor : adj.get(current)) {
+        if (closed.contains(neighbor))
+          continue;
+
+        possibleGScore = gScore.get(current) + 1.0;
+        if (!open.contains(neighbor))
+          open.add(neighbor);
+        else if (possibleGScore >= gScore.get(neighbor))
+          continue;
+
+        cameFrom.put(neighbor, current);
+        gScore.put(neighbor, possibleGScore);
+        fScore.put(neighbor, possibleGScore + hueristic(neighbor, goal));
+      }
+    }
+    return new ArrayList<PVector>();
+  }
+
+  private PVector findMin(ArrayList<PVector> open, HashMap<PVector, Float> fScore) {
+    PVector min = new PVector(-1, -1);
+    float minScore = Float.MAX_VALUE;
+    for (PVector p : open) {
+      if (fScore.get(p) < minScore) {
+        min = p;
+        minScore = fScore.get(p);
+      }
+    }
+    return min;
+  }
+
+  private ArrayList<PVector> reconstruct(HashMap<PVector, PVector> cameFrom, PVector current) {
+    ArrayList<PVector> path = new ArrayList<PVector>();
+    path.add(current);
+    while (cameFrom.containsKey(current)) {
+      current = cameFrom.get(current);
+      path.add(current);
+    }
+    return path;
+  }
+
+  private float hueristic(PVector current, PVector goal) {
+    return PVector.dist(current, goal);
   }
 }

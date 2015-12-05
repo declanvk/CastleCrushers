@@ -1,9 +1,12 @@
+import java.util.Iterator;
+
 public class Level {
   private final int NUM_KEYS = 3;
 
   private final int height, width;
   private final PVector startPos;
-  private final Map map;
+  //TODO change
+  public final Map map;
   private final Grid grid;
 
   final Human character;
@@ -29,6 +32,16 @@ public class Level {
     this.numKeysCollected = 0;
 
     spawnBats(5, bats);
+    spawnKeys(NUM_KEYS, keys);
+  }
+
+  private void spawnKeys(int numKeys, ArrayList<Key> keys) {
+    int x, y;
+    for (int i = 0; i < numKeys; i++) {
+      y = ((int) random(0, this.width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 5;
+      x = ((int) random(0, this.height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 12;
+      keys.add(new Key(x, y));
+    }
   }
 
   private void spawnBats(int numBats, ArrayList<Bat> bats) {
@@ -36,7 +49,7 @@ public class Level {
       bats.add(new Bat(.25, character));
     }
   }
-  
+
   public void addProjectile() {
     projectiles.add(new Projectile(character));
   }
@@ -77,17 +90,26 @@ public class Level {
       }
     }
 
-    for (Projectile p : projectiles) {
+    boolean hit = false;
+    for (int j = 0; j < projectiles.size(); j++) {
+      hit = false;
       for (int i = 0; i < bats.size(); i++) {
-        if (bats.get(i).bound.intersects(p.bound)) {
+        if (bats.get(i).bound.intersects(projectiles.get(j).bound)) {
           bats.set(i, new Bat(.25, character));
-          p.bound.width = 0;
-          p.bound.height = 0;
+          hit |= true;
         }
       }
+      if (hit)
+        projectiles.remove(j);
     }
 
-    for (Key k : keys) {
+    Iterator<Key> iter = keys.iterator();
+    while (iter.hasNext()) {
+      Key k = iter.next();
+      if (k.bound.intersects(character.bound)) {
+        numKeysCollected++;
+        iter.remove();
+      }
     }
   }
 

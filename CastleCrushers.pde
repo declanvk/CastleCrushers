@@ -12,8 +12,9 @@ void setup() {
   start = new PVector(0, (int) random(0, 10));
   lev = new Level(start, width, height);
   anim = new Animation();
-  k = new Key(200, 500, 0.25);
+  k = new Key(200, 200);
   frameRate(60);
+  println(lev.map.astar(start, new PVector(start.x + 1, start.y), lev.map.adjacency));
 }
 
 void draw() {
@@ -22,7 +23,6 @@ void draw() {
     anim.draw();
   } else if (!lev.isGameOver()) {
     background(lev.getBackground());
-    k.draw();
     //lev.update();
     lev.handleCollisions();
     lev.draw();
@@ -80,21 +80,4 @@ void keyReleased() {
     lev.addProjectile();
     break;
   }
-}
-
-int doorY = 0;
-void spawnDoor() {
-  doorY = ((int)random(0, 10)) * (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) + Map.WALL_WIDTH_PX;
-}
-
-void drawDoor() {
-  if (doorY == 0) return;
-
-  pushStyle();
-  pushMatrix();
-  translate(width - Map.WALL_WIDTH_PX, doorY);
-  fill(124, 50, 0);
-  rect(0, 0, Map.WALL_WIDTH_PX, Map.CELL_HEIGHT_PX);
-  popMatrix();
-  popStyle();
 }
