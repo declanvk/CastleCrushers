@@ -1,109 +1,39 @@
-//Oscar Jones //<>// //<>// //<>//
-//Justis Mackaou
-//Zachary Richardson
-//Declan Kelly
-Animation anim;
-Level lev;
-DeathAnim DA;
-void setup() {
-  size(1210, 610);
-  lev = new Level(new PVector(0, (int) random(0, 10)), 20);
-  anim = new Animation();
-  DA = new DeathAnim();
-  frameRate(60);
-}
+public class DeathAnim {
 
-void draw() {
-  if (frameCount < .685) { //685
-    anim.draw();
-  } else if (!lev.isGameOver() && !lev.isLevelOver()) {
-    background(lev.getBackground());
-    lev.update();
-    lev.handleCollisions();
-    lev.checkWinState();
-    lev.draw();
-<<<<<<< Updated upstream
-  } else if(lev.isGameOver()) {
-    background(255, 0, 0);
-    color c = color(random(255), random(255), random(255));
-    fill(c);
-    textSize(50);
-    text("GAME OVER", 200, height/2);
-    if (frameCount % 60 == 0)
-      c=color(random(255), random(255), random(255));
-  } else if(lev.isLevelOver()) {
-    lev = new Level(new PVector(0, lev.getEndPos().y), lev.getNumLives());
-    System.gc();
-=======
-    lev.paintRoutes();
-  } else {
-    DA.draw();
->>>>>>> Stashed changes
+  float sz; 
+  PFont font;
+  int FC;
+  boolean test;
+  DeathAnim() {
+    this.sz = .5;
+    this.font = loadFont("Luminari-Regular-48.vlw");
+    this.test=false;
   }
-  
-}
 
-void keyPressed() {
-  switch(keyCode) {
-  case 37:
-    lev.character.movingLeft = true;
-    break;
-  case 38:
-    lev.character.movingUp = true;
-    break;
-  case 39:
-    lev.character.movingRight = true;
-    break;
-  case 40:
-    lev.character.movingDown = true;
-    break;
-  case 87:
-    lev.character.MOVESPEED += 0.5;
-    println(lev.character.MOVESPEED);
-    break;
-  case 83:
-    lev.character.MOVESPEED -= 0.5;
-    println(lev.character.MOVESPEED);
-    break;
-  case 65:
-    println(frameRate);
-    break;
-  case 80:
-    println(lev.projectiles.size());
-    break;
-  }
-}
+  public void draw() {
+    if (test==false){
+     frameCount=0;
+     test=true;
+    }
 
-void keyReleased() {
-  switch(keyCode) {
-  case 37:
-    lev.character.movingLeft = false;
-    break;
-  case 38:
-    lev.character.movingUp = false;
-    break;
-  case 39:
-    lev.character.movingRight = false;
-    break;
-  case 40:
-    lev.character.movingDown = false;
-    break;
-  case 81: //q
-    lev.addProjectile();
-    break;
-  }
-}
+    if (frameCount < 70) {
+        background(200, 100, 100);
+      pushMatrix();
+      translate(width/2, height/2);
+      scale(sz);
+      batDown();
+      popMatrix();
+      sz+=.1;
+    } else {
 
+      fill(200, 100, 100);
+      textFont(font, 50); 
+      text("GAME", width/2-60, 100);
+      text("OVER", width/2-60, 150);
+    }
+  }}
 
-
-
-
-
-
-
-
-
-  void batUp()
+  void batDown()
   {
     //feet
     fill(70, 70, 68); //bat grey
@@ -212,6 +142,32 @@ void keyReleased() {
     stroke(0);
     strokeWeight(3);     
     popMatrix();   
+
+    //inner ears
+    //R
+    pushMatrix();
+    scale(1.0, 1.0);
+    fill(255, 44, 115); //lighter mouth
+    strokeWeight(2);
+    beginShape();
+    vertex(37, -44);
+    vertex(50, -58);
+    vertex(46, -30);
+    endShape();
+    popMatrix();
+    //L
+    pushMatrix();
+    scale(-1.0, 1.0);
+    fill(255, 44, 115); //lighter mouth
+    strokeWeight(2);
+    beginShape();
+    vertex(37, -44);
+    vertex(50, -58);
+    vertex(46, -30);
+    endShape();
+    popMatrix();
+
+
     strokeWeight(3);
 
     noStroke();
@@ -240,8 +196,86 @@ void keyReleased() {
     vertex(40, -3);
     vertex(42, -1); //last
     endShape();
+
     popMatrix();
+
+    //mouth
+    pushMatrix();
+    translate(-8, 0);
+    rotate(-radians(2));
+    rectMode(CENTER);
+    pushMatrix();
+    translate(28, 14);
+    rotate(radians(2));
+    fill(255, 44, 115); //lighter mouth
+    rect(-20, 2, 50, 34, 12); //mouth
+    popMatrix();
+
+    fill(180, 44, 100); //darker mouth
+    noStroke();
+    pushMatrix();
+    translate(0, 0);
+    rotate(radians(2));
+    quad(-15, 0, 32, 0, 32, 13, -15, 13); //top of mouth
+    popMatrix();
+
     stroke(0);
+
+    //teeth
+    fill(230);
+    strokeWeight(2);
+    // T L
+    beginShape();
+    vertex(0, -3);
+    vertex(-2, 8);
+    vertex(-7, 15);
+    vertex(-10, 9);
+    vertex(-13, 7);
+    vertex(-16, -3);
+    endShape(CLOSE);
+    //T R
+    beginShape();
+    vertex(19, -1);
+    vertex(20, 5);
+    vertex(19, 12);
+    vertex(30, 8);
+    vertex(32, 4);
+    vertex(19, -1);
+
+    endShape();
+    //B L
+    beginShape();
+    vertex(-14, 29);
+    vertex(-12, 24);
+    vertex(-8, 24);
+    vertex(-5, 22);
+    vertex(-4, 28);
+    vertex(-5, 31);
+    endShape(CLOSE);
+    //B R
+    beginShape();
+    vertex(19, 32);
+    vertex(21, 24);
+    vertex(29, 25);
+    vertex(28, 31);
+    endShape(CLOSE);
+    strokeWeight(3);
+
+    //eyes
+    fill(241, 28, 50); //red eyes
+    ellipse(-15, -9, 25, 25); //L eye
+    ellipse(36, -7, 25, 25); //R eye
+    noStroke();
+    fill(240);
+    pushMatrix();
+    translate(-4, 2);
+    ellipse(-11, -11, 11, 11); //L eye shine
+    ellipse(40, -9, 11, 11); //R eye shine
+    popMatrix();
+    popMatrix();
+
+    stroke(0);
+
     //wings
     fill(70, 70, 68); //bat grey
     //L
