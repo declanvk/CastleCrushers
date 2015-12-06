@@ -1,4 +1,4 @@
-//Oscar Jones //<>//
+//Oscar Jones //<>// //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -6,22 +6,21 @@ Animation anim;
 Level lev;
 void setup() {
   size(1210, 610);
-  lev = new Level(new PVector(0, (int) random(0, 10)), width, height);
+  lev = new Level(new PVector(0, (int) random(0, 10)), 20);
   anim = new Animation();
   frameRate(60);
 }
 
 void draw() {
-  //685
-  if (frameCount < .685) {
+  if (frameCount < .685) { //685
     anim.draw();
-  } else if (!lev.isGameOver()) {
+  } else if (!lev.isGameOver() && !lev.isLevelOver()) {
     background(lev.getBackground());
     lev.update();
     lev.handleCollisions();
+    lev.checkWinState();
     lev.draw();
-    lev.paintRoutes();
-  } else {
+  } else if(lev.isGameOver()) {
     background(255, 0, 0);
     color c = color(random(255), random(255), random(255));
     fill(c);
@@ -29,6 +28,9 @@ void draw() {
     text("GAME OVER", 200, height/2);
     if (frameCount % 60 == 0)
       c=color(random(255), random(255), random(255));
+  } else if(lev.isLevelOver()) {
+    lev = new Level(new PVector(0, lev.getEndPos().y), lev.getNumLives());
+    System.gc();
   }
 }
 
@@ -47,11 +49,11 @@ void keyPressed() {
     lev.character.movingDown = true;
     break;
   case 87:
-    lev.character.MOVESPEED++;
+    lev.character.MOVESPEED += 0.5;
     println(lev.character.MOVESPEED);
     break;
   case 83:
-    lev.character.MOVESPEED--;
+    lev.character.MOVESPEED -= 0.5;
     println(lev.character.MOVESPEED);
     break;
   case 65:

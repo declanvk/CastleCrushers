@@ -13,11 +13,11 @@ class Map {
   private final int MAZE_MODE_RANDOM = 1;
   private final int MAZE_MODE_OLDEST = 2;
 
-  private final int mode = MAZE_MODE_NEWEST;
+  private final int mode = MAZE_MODE_RANDOM;
 
   private final PImage woodTile, stoneTile;
 
-  private final int width, height, rows, columns;
+  private final int rows, columns;
   private final PGraphics floor, walls;
   private final PGraphics maze;
   private final PGraphics output;
@@ -32,15 +32,13 @@ class Map {
   //TODO change
   public final HashMap<PVector, ArrayList<PVector>> adjacency;
 
-  Map(int w, int h, PVector start, Grid g) {
+  Map(PVector start, Grid g) {
     this.woodTile = loadImage("wood_floor.png");
     this.stoneTile = loadImage("stone_wall.png");
-    this.width = w;
-    this.height = h;
-    this.rows = h / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
-    this.columns = w / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
-    this.floor = generateTiling(woodTile, w, h);
-    this.walls = generateTiling(stoneTile, w, h);
+    this.rows = height / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
+    this.columns = width / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
+    this.floor = generateTiling(woodTile, width, height);
+    this.walls = generateTiling(stoneTile, width, height);
     this.output = createGraphics(width, height);
 
     this.drawList = new ArrayList<BoundingBox>();
@@ -90,10 +88,10 @@ class Map {
   }
 
   private void addWalls(ArrayList<BoundingBox> drawList) {
-    addBox(new PVector(0, 0), WALL_WIDTH_PX, this.height, drawList);
-    addBox(new PVector(this.width - WALL_WIDTH_PX, 0), WALL_WIDTH_PX, this.height, drawList);
-    addBox(new PVector(WALL_WIDTH_PX, 0), this.width - 2 * WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
-    addBox(new PVector(WALL_WIDTH_PX, this.height - WALL_WIDTH_PX), this.width - 2 * WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
+    addBox(new PVector(0, 0), WALL_WIDTH_PX, height, drawList);
+    addBox(new PVector(width - WALL_WIDTH_PX, 0), WALL_WIDTH_PX, height, drawList);
+    addBox(new PVector(WALL_WIDTH_PX, 0), width - 2 * WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
+    addBox(new PVector(WALL_WIDTH_PX, height - WALL_WIDTH_PX), width - 2 * WALL_WIDTH_PX, WALL_WIDTH_PX, drawList);
   }
 
   private void seedColumns(ArrayList<BoundingBox> drawList) {

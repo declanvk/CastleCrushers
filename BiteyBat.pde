@@ -15,7 +15,14 @@ public class Bat
   }
 
   public void draw() 
-  {    
+  {
+    pushStyle();
+    noFill();
+    strokeWeight(2);
+    stroke(255);
+    rect(bound.anchor.x, bound.anchor.y, bound.width, bound.height);
+    popStyle();
+
     pushStyle();
     pushMatrix();
     translate(this.bound.anchor.x, this.bound.anchor.y);

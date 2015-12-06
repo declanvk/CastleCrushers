@@ -4,10 +4,10 @@ public class Grid {
   private final int rows, cols;
   private final int cellSize;
 
-  public Grid (int mapWidth, int mapHeight, int cellSize) {
+  public Grid (int cellSize) {
     this.cellSize = cellSize;
-    this.rows = (mapHeight + cellSize - 1) / cellSize;
-    this.cols = (mapWidth + cellSize - 1) / cellSize;
+    this.rows = (height + cellSize - 1) / cellSize;
+    this.cols = (width + cellSize - 1) / cellSize;
     this.grid = new BoundingBoxContainer[cols][rows];
 
     for (int x = 0; x < grid.length; x++)

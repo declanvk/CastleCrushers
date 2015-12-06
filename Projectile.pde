@@ -1,7 +1,6 @@
 public class Projectile {
 
-  private float x, y, speedX;
-  //private boolean visible;
+  private float speedX;
 
   public BoundingBox bound;
   

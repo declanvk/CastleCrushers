@@ -14,11 +14,12 @@ public PVector xyToCR(PVector xy) {
 
 public class Level {
   private final int NUM_KEYS = 3;
+  private final int NUM_BATS = 5;
   private final int LIVES_POP_MULT = 5;
   private final int LIVES_POP_DURATION = 2;
 
-  private final int height, width;
-  private final PVector startPos;
+  private final int rows, columns;
+  private final PVector startPos, endPos;
   //TODO change
   public final Map map;
   private final Grid grid;
@@ -29,6 +30,8 @@ public class Level {
 
   private final ArrayList<Key> keys;
   private int numKeysCollected;
+  private final Door enterDoor, exitDoor;
+  private boolean drawDoor;
 
   private final ArrayList<Heart> lives;
   private float livesScaleInc = 0.0;
@@ -38,22 +41,26 @@ public class Level {
   private boolean gameOver = false;
   private boolean levelOver = false;
 
-  Level(PVector start, int h, int w) {
+  Level(PVector start, int l) {
+    this.rows = (height - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
+    this.columns = (width - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
     this.startPos = start;
-    this.height = h;
-    this.width = w;
-    this.grid = new Grid(h, w, Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX);
-    this.map = new Map(h, w, startPos, grid);
+    this.endPos = new PVector(this.columns - 1, (int) random(0, rows));
+    this.grid = new Grid(Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX);
+    this.map = new Map(startPos, grid);
     this.character = new Human(Map.WALL_WIDTH_PX + 15, Map.WALL_WIDTH_PX + 10 + (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX) * start.y, 1);
     this.bats = new ArrayList<Bat>();
     this.projectiles = new ArrayList<Projectile>();
     this.keys = new ArrayList<Key>(NUM_KEYS);
     this.numKeysCollected = 0;
+    this.drawDoor = false;
+    this.enterDoor = new Door(PVector.add(new PVector(5, 0), crToXY(startPos)));
+    this.exitDoor = new Door(PVector.add(new PVector(5, 0), crToXY(endPos)));
     this.lives = new ArrayList<Heart>(5);
     this.routes = new HashMap<Bat, ArrayList<PVector>>();
 
-    initLives(5, lives);
-    spawnBats(5, bats, routes, character, map);
+    initLives(l, lives);
+    spawnBats(NUM_BATS, bats, routes, character, map);
     spawnKeys(NUM_KEYS, keys);
   }
 
@@ -65,8 +72,8 @@ public class Level {
   private void spawnKeys(int numKeys, ArrayList<Key> keys) {
     int x, y;
     for (int i = 0; i < numKeys; i++) {
-      y = ((int) random(0, this.width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 5;
-      x = ((int) random(0, this.height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 12;
+      x = ((int) random(0, width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 5;
+      y = ((int) random(0, height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 12;
       keys.add(new Key(x, y));
     }
   }
@@ -96,7 +103,7 @@ public class Level {
         routes.put(b, map.astar( xyToCR(b.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
 
     ArrayList<PVector> path;
-    PVector target, centering = new PVector(0, 0);
+    PVector target;
     for (Bat b : bats) {
       path = routes.get(b);
       int i = path.indexOf(xyToCR(b.bound.anchor));
@@ -104,14 +111,50 @@ public class Level {
         target = crToXY(path.get(i - 1));
       else
         target = character.bound.anchor;
-      b.update(PVector.add(centering, target));
+      b.update(target);
+      drawTarget(target);
     }
 
     for (Projectile p : projectiles)
       p.update();
   }
 
-  public void paintRoutes() {
+  public void draw() {
+    enterDoor.draw();
+    character.draw();
+
+    for (Bat b : bats)
+      b.draw();
+
+    for (Projectile p : projectiles)
+      p.draw();
+
+    for (Key k : keys)
+      k.draw();
+
+    for (float i = 0; i < lives.size(); i++)
+      lives.get((int) i).draw(PVector.add(character.bound.anchor, new PVector((i - (lives.size() / 2)) * 15, -10)), Heart.SCALE + livesScaleInc);
+    if (livesScaleInc > 0)
+      livesScaleInc -= (Heart.SCALE_INC / LIVES_POP_DURATION);
+
+    paintRoutes();
+    if (drawDoor)
+      exitDoor.draw();
+  }
+
+  private void drawTarget(PVector target) {
+    pushStyle();
+    noFill();
+    strokeWeight(2);
+    stroke(255);
+    pushMatrix();
+    translate(target.x, target.y);
+    rect(0, 0, 50, 50);
+    popMatrix();
+    popStyle();
+  }
+
+  private void paintRoutes() {
     PVector centering = new PVector(25, 25);
     pushStyle();
     strokeWeight(2);
@@ -128,22 +171,11 @@ public class Level {
     popStyle();
   }
 
-  public void draw() {
-    character.draw();
-
-    for (Bat b : bats)
-      b.draw();
-
-    for (Projectile p : projectiles)
-      p.draw();
-
-    for (Key k : keys)
-      k.draw();
-
-    for (float i = 0; i < lives.size(); i++)
-      lives.get((int) i).draw(PVector.add(character.bound.anchor, new PVector((i - (lives.size() / 2)) * 15, -10)), Heart.SCALE + livesScaleInc);
-    if (livesScaleInc > 0)
-      livesScaleInc -= (Heart.SCALE_INC / LIVES_POP_DURATION);
+  public void checkWinState() {
+    if (numKeysCollected >= NUM_KEYS)
+      drawDoor = true;
+    if (endPos.equals(xyToCR(character.bound.anchor)))
+      levelOver = true;
   }
 
   public void handleCollisions() {
@@ -187,6 +219,7 @@ public class Level {
       }
     }
 
+    //Projectiles hit bats
     boolean hit = false;
     for (int j = 0; j < projectiles.size(); j++) {
       hit = false;
@@ -204,12 +237,25 @@ public class Level {
         projectiles.remove(j);
     }
 
-    ListIterator<Key> iter = keys.listIterator();
-    while (iter.hasNext()) {
-      Key k = iter.next();
+    //Projectiles hit walls
+    ListIterator<Projectile> pIter = projectiles.listIterator();
+    while (pIter.hasNext()) {
+      Projectile p = pIter.next();
+      for (BoundingBox b : grid.getColliding(p.bound)) {
+        if (p.bound.intersects(b)) {
+          pIter.remove();
+          break;
+        }
+      }
+    }
+
+    //Character hits keys
+    ListIterator<Key> kIter = keys.listIterator();
+    while (kIter.hasNext()) {
+      Key k = kIter.next();
       if (k.bound.intersects(character.bound)) {
         numKeysCollected++;
-        iter.remove();
+        kIter.remove();
       }
     }
   }
@@ -224,5 +270,13 @@ public class Level {
 
   public boolean isLevelOver() {
     return levelOver;
+  }
+
+  public int getNumLives() {
+    return lives.size();
+  }
+
+  public PVector getEndPos() {
+    return endPos;
   }
 }
