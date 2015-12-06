@@ -1,18 +1,17 @@
-//Oscar Jones //<>//
+//Oscar Jones //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
-
+boolean livesVisible;
 Animation anim;
 Level lev;
 PVector start;
-Key k;
+int livesSize=0;
 void setup() {
   size(1210, 610);
   start = new PVector(0, (int) random(0, 10));
   lev = new Level(start, width, height);
   anim = new Animation();
-  k = new Key(200, 200);
   frameRate(60);
   println(lev.map.astar(start, new PVector(start.x + 1, start.y), lev.map.adjacency));
 }
@@ -23,14 +22,38 @@ void draw() {
     anim.draw();
   } else if (!lev.isGameOver()) {
     background(lev.getBackground());
-    //lev.update();
+    lev.update();
     lev.handleCollisions();
     lev.draw();
+
+    if (livesVisible)
+    {
+      pushStyle();
+      pushMatrix();
+      translate(lev.character.bound.anchor.x, lev.character.bound.anchor.y);
+      if (livesSize<50)
+        scale(livesSize);
+      else
+        scale(101-livesSize);
+      fill(200, 50, 10);
+      textSize(10);
+      text(lev.character.lives + " lives left!", 0, 0);
+      popMatrix();
+      popStyle();
+      livesSize++;
+      if (livesSize>100)
+        livesVisible=false;
+    }
   } else {
     background(255, 0, 0);
+    color c=color(random(255), random(255), random(255));
+    fill(c);
+    textSize(50);
+    text("GAME OVER", 200, height/2);
+    if (frameCount%60==0)
+      c=color(random(255), random(255), random(255));
   }
 }
-
 
 void keyPressed() {
   switch(keyCode) {

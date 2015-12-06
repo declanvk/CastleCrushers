@@ -1,93 +1,54 @@
 public class Bat 
 {
+  private final float SCALE = 0.25;
   final float ENEMYSPEED;
-  public boolean movingUp, movingDown, movingRight, movingLeft;
-  public float size, wd, ht;
-  public String position, last;
 
   public PVector p = new PVector();
   public PVector dir=new PVector();
 
   public BoundingBox bound;
-  private Human character;
 
-
-  Bat(float sz, Human ch) 
+  Bat(Human ch) 
   {
-    this.size=sz;
-    this.character = ch;
     this.ENEMYSPEED = ch.MOVESPEED;
-    this.bound = new BoundingBox(new PVector(random(100, 1100), random(100, 500)), (int)(sz * 100), (int)(sz * 100));
-
-
-    this.wd=sz;
-    this.ht=sz;
-    this.position="RIGHT";
+    this.bound = new BoundingBox(new PVector(random(100, 1100), random(100, 500)), (int)(SCALE * 100), (int)(SCALE * 100));
   }
 
   public void draw() 
   {
-    fill(255);
-    rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
     pushStyle();
     pushMatrix();
-    translate(this.bound.anchor.x+this.size*50, this.bound.anchor.y+this.size*50);
-    scale(this.size); 
+    translate(this.bound.anchor.x+SCALE*50, this.bound.anchor.y+SCALE*50);
+    scale(SCALE); 
 
-    this.drawPosition(position);
+    this.drawDirection(dir.copy().normalize());
 
     popMatrix();
+    stroke(255);
+    noFill();
+    rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
     popStyle();
   }
 
-  public void update() 
+  public void update(PVector target) 
   {
-    this.last=this.position;
-
-    this.dir=PVector.sub(character.bound.anchor, this.bound.anchor);
+    this.dir=PVector.sub(target, this.bound.anchor);
     this.dir.normalize();
     this.dir.mult(ENEMYSPEED);
     this.bound.anchor.add(this.dir);
-
-    if (movingRight)
-    {
-    }
-
-    if (movingLeft)
-    {
-    }
-
-    if (movingUp)
-    {
-    } 
-    if (movingDown)
-    {
-    }
   }
 
-  public void drawPosition(String pos) 
+  public void drawDirection(PVector direction) 
   {
     strokeWeight(3);
-
-    if (pos=="UP") 
-    {
-      batUp();
-    }
-
-    if (pos=="DOWN") 
-    {
-      batDown();
-    }
-
-    if (pos=="LEFT") 
-    {
-      batLeft();
-    }
-
-
-    if (pos=="RIGHT") 
-    {
+    if (direction.x > 0) {
       batRight();
+    } else if (direction.x < 0) {
+      batLeft();
+    } else if (direction.y < 0) {
+      batUp();
+    } else {
+      batDown();
     }
   }
 

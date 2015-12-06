@@ -1,4 +1,4 @@
-import java.util.Iterator;
+import java.util.ListIterator;
 
 public class Level {
   private final int NUM_KEYS = 3;
@@ -46,7 +46,7 @@ public class Level {
 
   private void spawnBats(int numBats, ArrayList<Bat> bats) {
     for (int i=0; i < numBats; i++) {
-      bats.add(new Bat(.25, character));
+      bats.add(new Bat(character));
     }
   }
 
@@ -57,7 +57,7 @@ public class Level {
   public void update() {
     character.update();
     for (Bat b : bats)
-      b.update();
+      b.update(character.bound.anchor);
 
     for (Projectile p : projectiles)
       p.update();
@@ -84,9 +84,27 @@ public class Level {
       }
     }
 
-    for (Bat b : bats) {
+    for (Bat bt : bats) {
+      for (BoundingBox b : grid.getColliding(bt.bound)) {
+        if (b.intersects(bt.bound)) {
+          PVector proj = b.overlap(bt.bound);
+          bt.bound.shift(proj.x, proj.y);
+        }
+      }
+    }
+
+    ListIterator<Bat> bIter = bats.listIterator();
+    while (bIter.hasNext()) {
+      Bat b = bIter.next();
       if (b.bound.intersects(character.bound)) {
-        gameOver = true;
+        character.lives--;
+        bIter.remove();
+        bIter.add(new Bat(character));
+        livesVisible=true;
+        livesSize=1;
+
+        if (character.lives<=0)
+          gameOver=true;
       }
     }
 
@@ -95,7 +113,8 @@ public class Level {
       hit = false;
       for (int i = 0; i < bats.size(); i++) {
         if (bats.get(i).bound.intersects(projectiles.get(j).bound)) {
-          bats.set(i, new Bat(.25, character));
+          bats.set(i, new Bat(character));
+
           hit |= true;
         }
       }
@@ -103,7 +122,7 @@ public class Level {
         projectiles.remove(j);
     }
 
-    Iterator<Key> iter = keys.iterator();
+    ListIterator<Key> iter = keys.listIterator();
     while (iter.hasNext()) {
       Key k = iter.next();
       if (k.bound.intersects(character.bound)) {
