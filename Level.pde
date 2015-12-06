@@ -1,14 +1,14 @@
 import java.util.ListIterator;
 
-public PVector columnRowToXY(PVector rc, int wallWidth, int cellSide) {
-  float x = wallWidth + rc.x * (cellSide + wallWidth);
-  float y = wallWidth + rc.y * (cellSide + wallWidth);
-  return new PVector(x, y);
+public PVector crToXY(PVector rc) {
+  float x = Map.WALL_WIDTH_PX + rc.x * (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX);
+  float y = Map.WALL_WIDTH_PX + rc.y * (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX);
+  return new PVector((int) x, (int) y);
 }
 
-public PVector xyToColumnRow(PVector xy, int wallWidth, int cellSide) {
-  float y = ((xy.y - wallWidth) / (cellSide + wallWidth));
-  float x = ((xy.x - wallWidth) / (cellSide + wallWidth));
+public PVector xyToCR(PVector xy) {
+  int y = (int) ((xy.y) / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX));
+  int x = (int) ((xy.x) / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX));
   return new PVector(x, y);
 }
 
@@ -33,6 +33,8 @@ public class Level {
   private final ArrayList<Heart> lives;
   private float livesScaleInc = 0.0;
 
+  private final HashMap<Bat, ArrayList<PVector>> routes;
+
   private boolean gameOver = false;
   private boolean levelOver = false;
 
@@ -48,9 +50,10 @@ public class Level {
     this.keys = new ArrayList<Key>(NUM_KEYS);
     this.numKeysCollected = 0;
     this.lives = new ArrayList<Heart>(5);
+    this.routes = new HashMap<Bat, ArrayList<PVector>>();
 
     initLives(5, lives);
-    spawnBats(5, bats);
+    spawnBats(5, bats, routes, character, map);
     spawnKeys(NUM_KEYS, keys);
   }
 
@@ -68,10 +71,17 @@ public class Level {
     }
   }
 
-  private void spawnBats(int numBats, ArrayList<Bat> bats) {
+  private void spawnBats(int numBats, ArrayList<Bat> bats, HashMap<Bat, ArrayList<PVector>> r, Human c, Map m) {
     for (int i=0; i < numBats; i++) {
       bats.add(new Bat(character));
     }
+
+    for (Bat b : bats)
+      r.put(b, m.astar(
+        xyToCR(b.bound.anchor), 
+        xyToCR(c.bound.anchor), 
+        m.adjacency)
+        );
   }
 
   public void addProjectile() {
@@ -80,11 +90,42 @@ public class Level {
 
   public void update() {
     character.update();
+
     for (Bat b : bats)
-      b.update(character.bound.anchor);
+      if (!routes.get(b).contains(xyToCR(character.bound.anchor)))
+        routes.put(b, map.astar( xyToCR(b.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
+
+    ArrayList<PVector> path;
+    PVector target, centering = new PVector(0, 0);
+    for (Bat b : bats) {
+      path = routes.get(b);
+      int i = path.indexOf(xyToCR(b.bound.anchor));
+      if (i > 0)
+        target = crToXY(path.get(i - 1));
+      else
+        target = character.bound.anchor;
+      b.update(PVector.add(centering, target));
+    }
 
     for (Projectile p : projectiles)
       p.update();
+  }
+
+  public void paintRoutes() {
+    PVector centering = new PVector(25, 25);
+    pushStyle();
+    strokeWeight(2);
+    ArrayList<PVector> path;
+    for (Bat b : bats) {
+      path = routes.get(b);
+      PVector prev = PVector.add(crToXY(path.get(0)), centering), current;
+      for (int i = 1; i < path.size(); i++) {
+        current = PVector.add(centering, crToXY(path.get(i)));
+        line(prev.x, prev.y, current.x, current.y);
+        prev = current;
+      }
+    }
+    popStyle();
   }
 
   public void draw() {
@@ -101,11 +142,12 @@ public class Level {
 
     for (float i = 0; i < lives.size(); i++)
       lives.get((int) i).draw(PVector.add(character.bound.anchor, new PVector((i - (lives.size() / 2)) * 15, -10)), Heart.SCALE + livesScaleInc);
-    if(livesScaleInc > 0)
+    if (livesScaleInc > 0)
       livesScaleInc -= (Heart.SCALE_INC / LIVES_POP_DURATION);
   }
 
   public void handleCollisions() {
+    //Character wall intersection
     for (BoundingBox b : grid.getColliding(character.bound)) {
       if (b.intersects(character.bound)) {
         PVector proj = b.overlap(character.bound);
@@ -113,6 +155,7 @@ public class Level {
       }
     }
 
+    //Bat wall intersection
     for (Bat bt : bats) {
       for (BoundingBox b : grid.getColliding(bt.bound)) {
         if (b.intersects(bt.bound)) {
@@ -122,12 +165,18 @@ public class Level {
       }
     }
 
+    //Player bat intersection
     ListIterator<Bat> bIter = bats.listIterator();
     while (bIter.hasNext()) {
       Bat b = bIter.next();
       if (b.bound.intersects(character.bound)) {
+        routes.remove(b);
         bIter.remove();
-        bIter.add(new Bat(character));
+
+        Bat newBat = new Bat(character);
+        bIter.add(newBat);
+        routes.put(newBat, map.astar(xyToCR(newBat.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
+
         if (lives.size() > 0) {
           lives.remove(0);
           livesScaleInc = Heart.SCALE_INC * LIVES_POP_MULT;
@@ -143,7 +192,10 @@ public class Level {
       hit = false;
       for (int i = 0; i < bats.size(); i++) {
         if (bats.get(i).bound.intersects(projectiles.get(j).bound)) {
-          bats.set(i, new Bat(character));
+          routes.remove(bats.get(i));
+          Bat newBat = new Bat(character);
+          bats.set(i, newBat);
+          routes.put(newBat, map.astar(xyToCR(newBat.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
 
           hit |= true;
         }

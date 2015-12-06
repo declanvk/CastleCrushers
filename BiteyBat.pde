@@ -11,28 +11,24 @@ public class Bat
   Bat(Human ch) 
   {
     this.ENEMYSPEED = ch.MOVESPEED;
-    this.bound = new BoundingBox(new PVector(random(100, 1100), random(100, 500)), (int)(SCALE * 100), (int)(SCALE * 100));
+    this.bound = new BoundingBox(PVector.add(new PVector(10, 10), crToXY(new PVector((int) random(width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)), (int) random(height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))))), (int)(SCALE * 140), (int)(SCALE * 140));
   }
 
   public void draw() 
-  {
+  {    
     pushStyle();
     pushMatrix();
-    translate(this.bound.anchor.x+SCALE*50, this.bound.anchor.y+SCALE*50);
-    scale(SCALE); 
-
+    translate(this.bound.anchor.x, this.bound.anchor.y);
+    scale(SCALE);
+    translate(70, 80);
     this.drawDirection(dir.copy().normalize());
-
     popMatrix();
-    stroke(255);
-    noFill();
-    rect(this.bound.anchor.x, this.bound.anchor.y, this.bound.width, this.bound.height);
     popStyle();
   }
 
   public void update(PVector target) 
   {
-    this.dir=PVector.sub(target, this.bound.anchor);
+    this.dir = PVector.sub(target, this.bound.anchor);
     this.dir.normalize();
     this.dir.mult(ENEMYSPEED);
     this.bound.anchor.add(this.dir);

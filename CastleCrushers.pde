@@ -1,16 +1,12 @@
-//Oscar Jones //<>// //<>//
+//Oscar Jones //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
-boolean livesVisible;
 Animation anim;
 Level lev;
-PVector start;
-int livesSize=0;
 void setup() {
   size(1210, 610);
-  start = new PVector(0, (int) random(0, 10));
-  lev = new Level(start, width, height);
+  lev = new Level(new PVector(0, (int) random(0, 10)), width, height);
   anim = new Animation();
   frameRate(60);
 }
@@ -24,13 +20,14 @@ void draw() {
     lev.update();
     lev.handleCollisions();
     lev.draw();
+    lev.paintRoutes();
   } else {
     background(255, 0, 0);
-    color c=color(random(255), random(255), random(255));
+    color c = color(random(255), random(255), random(255));
     fill(c);
     textSize(50);
     text("GAME OVER", 200, height/2);
-    if (frameCount%60==0)
+    if (frameCount % 60 == 0)
       c=color(random(255), random(255), random(255));
   }
 }
@@ -47,7 +44,7 @@ void keyPressed() {
     lev.character.movingRight = true;
     break;
   case 40:
-    lev.character.movingDown=true;
+    lev.character.movingDown = true;
     break;
   case 87:
     lev.character.MOVESPEED++;
@@ -63,24 +60,22 @@ void keyPressed() {
   case 80:
     println(lev.projectiles.size());
     break;
-  default:
-    println(keyCode, key);
   }
 }
 
 void keyReleased() {
   switch(keyCode) {
   case 37:
-    lev.character.movingLeft=false;
+    lev.character.movingLeft = false;
     break;
   case 38:
-    lev.character.movingUp=false;
+    lev.character.movingUp = false;
     break;
   case 39:
-    lev.character.movingRight=false;
+    lev.character.movingRight = false;
     break;
   case 40:
-    lev.character.movingDown=false;
+    lev.character.movingDown = false;
     break;
   case 81: //q
     lev.addProjectile();
