@@ -1,6 +1,5 @@
 public class Human {
   public float MOVESPEED = 1;
-  int lives = 5;
   public float size, LegR, ArmR, walk;
   public boolean movingUp, movingDown, movingRight, movingLeft, LegDown, ArmDown, walking;
 

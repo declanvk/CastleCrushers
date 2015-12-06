@@ -13,7 +13,6 @@ void setup() {
   lev = new Level(start, width, height);
   anim = new Animation();
   frameRate(60);
-  println(lev.map.astar(start, new PVector(start.x + 1, start.y), lev.map.adjacency));
 }
 
 void draw() {
@@ -25,25 +24,6 @@ void draw() {
     lev.update();
     lev.handleCollisions();
     lev.draw();
-
-    if (livesVisible)
-    {
-      pushStyle();
-      pushMatrix();
-      translate(lev.character.bound.anchor.x, lev.character.bound.anchor.y);
-      if (livesSize<50)
-        scale(livesSize);
-      else
-        scale(101-livesSize);
-      fill(200, 50, 10);
-      textSize(10);
-      text(lev.character.lives + " lives left!", 0, 0);
-      popMatrix();
-      popStyle();
-      livesSize++;
-      if (livesSize>100)
-        livesVisible=false;
-    }
   } else {
     background(255, 0, 0);
     color c=color(random(255), random(255), random(255));
@@ -79,6 +59,9 @@ void keyPressed() {
     break;
   case 65:
     println(frameRate);
+    break;
+  case 80:
+    println(lev.projectiles.size());
     break;
   default:
     println(keyCode, key);

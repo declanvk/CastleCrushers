@@ -1,7 +1,21 @@
 import java.util.ListIterator;
 
+public PVector columnRowToXY(PVector rc, int wallWidth, int cellSide) {
+  float x = wallWidth + rc.x * (cellSide + wallWidth);
+  float y = wallWidth + rc.y * (cellSide + wallWidth);
+  return new PVector(x, y);
+}
+
+public PVector xyToColumnRow(PVector xy, int wallWidth, int cellSide) {
+  float y = ((xy.y - wallWidth) / (cellSide + wallWidth));
+  float x = ((xy.x - wallWidth) / (cellSide + wallWidth));
+  return new PVector(x, y);
+}
+
 public class Level {
   private final int NUM_KEYS = 3;
+  private final int LIVES_POP_MULT = 5;
+  private final int LIVES_POP_DURATION = 2;
 
   private final int height, width;
   private final PVector startPos;
@@ -15,6 +29,9 @@ public class Level {
 
   private final ArrayList<Key> keys;
   private int numKeysCollected;
+
+  private final ArrayList<Heart> lives;
+  private float livesScaleInc = 0.0;
 
   private boolean gameOver = false;
   private boolean levelOver = false;
@@ -30,9 +47,16 @@ public class Level {
     this.projectiles = new ArrayList<Projectile>();
     this.keys = new ArrayList<Key>(NUM_KEYS);
     this.numKeysCollected = 0;
+    this.lives = new ArrayList<Heart>(5);
 
+    initLives(5, lives);
     spawnBats(5, bats);
     spawnKeys(NUM_KEYS, keys);
+  }
+
+  private void initLives(int numLives, ArrayList<Heart> lives) {
+    for (int i = 0; i < numLives; i++)
+      lives.add(new Heart());
   }
 
   private void spawnKeys(int numKeys, ArrayList<Key> keys) {
@@ -74,6 +98,11 @@ public class Level {
 
     for (Key k : keys)
       k.draw();
+
+    for (float i = 0; i < lives.size(); i++)
+      lives.get((int) i).draw(PVector.add(character.bound.anchor, new PVector((i - (lives.size() / 2)) * 15, -10)), Heart.SCALE + livesScaleInc);
+    if(livesScaleInc > 0)
+      livesScaleInc -= (Heart.SCALE_INC / LIVES_POP_DURATION);
   }
 
   public void handleCollisions() {
@@ -97,14 +126,15 @@ public class Level {
     while (bIter.hasNext()) {
       Bat b = bIter.next();
       if (b.bound.intersects(character.bound)) {
-        character.lives--;
         bIter.remove();
         bIter.add(new Bat(character));
-        livesVisible=true;
-        livesSize=1;
+        if (lives.size() > 0) {
+          lives.remove(0);
+          livesScaleInc = Heart.SCALE_INC * LIVES_POP_MULT;
+        }
 
-        if (character.lives<=0)
-          gameOver=true;
+        if (lives.size() <= 0)
+          gameOver = true;
       }
     }
 
