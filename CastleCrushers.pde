@@ -1,4 +1,4 @@
-//Oscar Jones //<>// //<>// //<>//
+//Oscar Jones //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -7,14 +7,14 @@ Level lev;
 DeathAnim DA;
 void setup() {
   size(1210, 610);
-  lev = new Level(new PVector(0, (int) random(0, 10)), 20);
+  lev = new Level(new PVector(0, (int) random(0, 10)), 3);
   anim = new Animation();
   DA = new DeathAnim();
   frameRate(60);
 }
 
 void draw() {
-  if (frameCount < .685) { //685
+  if (frameCount < 685) { //685
     anim.draw();
   } else if (!lev.isGameOver() && !lev.isLevelOver()) {
     background(lev.getBackground());
@@ -22,24 +22,13 @@ void draw() {
     lev.handleCollisions();
     lev.checkWinState();
     lev.draw();
-<<<<<<< Updated upstream
   } else if(lev.isGameOver()) {
-    background(255, 0, 0);
-    color c = color(random(255), random(255), random(255));
-    fill(c);
-    textSize(50);
-    text("GAME OVER", 200, height/2);
-    if (frameCount % 60 == 0)
-      c=color(random(255), random(255), random(255));
+    DA.draw();
   } else if(lev.isLevelOver()) {
     lev = new Level(new PVector(0, lev.getEndPos().y), lev.getNumLives());
     System.gc();
-=======
     lev.paintRoutes();
-  } else {
-    DA.draw();
->>>>>>> Stashed changes
-  }
+  } 
   
 }
 

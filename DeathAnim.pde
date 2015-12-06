@@ -3,35 +3,30 @@ public class DeathAnim {
   float sz; 
   PFont font;
   int FC;
-  boolean test;
   DeathAnim() {
     this.sz = .5;
     this.font = loadFont("Luminari-Regular-48.vlw");
-    this.test=false;
+    int FC = 0;
   }
 
   public void draw() {
-    if (test==false){
-     frameCount=0;
-     test=true;
-    }
-
-    if (frameCount < 70) {
-        background(200, 100, 100);
+    if (FC < 70) {
+      background(200, 100, 100);
       pushMatrix();
       translate(width/2, height/2);
       scale(sz);
       batDown();
       popMatrix();
       sz+=.1;
+      FC+=1;
     } else {
-
       fill(200, 100, 100);
       textFont(font, 50); 
       text("GAME", width/2-60, 100);
       text("OVER", width/2-60, 150);
     }
-  }}
+  }
+
 
   void batDown()
   {
@@ -308,3 +303,4 @@ public class DeathAnim {
     endShape();
     popMatrix();
   }
+}
