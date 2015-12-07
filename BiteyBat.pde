@@ -1,6 +1,6 @@
 public class Bat 
 {
-  private final float SCALE = 0.25;
+  private final float SCALE = 0.2;
   final float ENEMYSPEED;
 
   public PVector p = new PVector();
@@ -17,13 +17,6 @@ public class Bat
   public void draw() 
   {
     pushStyle();
-    noFill();
-    strokeWeight(2);
-    stroke(255);
-    rect(bound.anchor.x, bound.anchor.y, bound.width, bound.height);
-    popStyle();
-
-    pushStyle();
     pushMatrix();
     translate(this.bound.anchor.x, this.bound.anchor.y);
     scale(SCALE);
@@ -32,9 +25,11 @@ public class Bat
     popMatrix();
     popStyle();
   }
-
+  
+  private final PVector centering = new PVector(Map.CELL_HEIGHT_PX / 2, Map.CELL_HEIGHT_PX / 2);
   public void update(PVector target) 
   {
+    target = PVector.sub(PVector.add(crToXY(xyToCR(target)), centering), new PVector(SCALE * 70, SCALE * 70));
     this.dir = PVector.sub(target, this.bound.anchor);
     this.dir.normalize();
     this.dir.mult(ENEMYSPEED);

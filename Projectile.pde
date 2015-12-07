@@ -1,7 +1,7 @@
 public class Projectile {
 
   private float speedX;
-  private final float SCALE = 3;
+  private final float SCALE = 2;
   private final float ROT_INC = PI / 36;
   private float ROT = 0;
   private boolean toggle = true;
@@ -10,13 +10,19 @@ public class Projectile {
 
   public String last;
 
+  private final PVector centering = new PVector(Map.CELL_HEIGHT_PX / 2, Map.CELL_HEIGHT_PX / 2);
+
   public Projectile(Human character) {
-    this.bound = new BoundingBox(character.bound.anchor, 10, 10);
+    this.bound = new BoundingBox(PVector.sub(PVector.add(crToXY(xyToCR(character.bound.anchor)), centering), new PVector(5 * SCALE, 5 * SCALE)), (int)(10 * SCALE), (int)(10 * SCALE));
     speedX = 4;
     last = character.last;
   }
 
   public void draw() {
+    pushMatrix();
+    translate(bound.anchor.x, bound.anchor.y);
+    scale(SCALE);
+    translate(SCALE * 10 / 4, SCALE * 10 / 4);
     if (this.last == "RIGHT")
       drawRightLeft(true);
     else if (this.last == "LEFT")
@@ -25,16 +31,15 @@ public class Projectile {
       drawUpDown(true);
     else if (this.last == "DOWN")
       drawUpDown(false);
+    popMatrix();
   }
-  
+
   public void drawRightLeft(boolean right) {
     pushStyle();
     noStroke();
     fill(255);
 
     pushMatrix();
-    translate(bound.anchor.x, bound.anchor.y);
-    scale(SCALE);
     rotate(ROT);
     translate(-5, -5);
 
@@ -58,8 +63,6 @@ public class Projectile {
     noStroke();
 
     pushMatrix();
-    translate(bound.anchor.x, bound.anchor.y);
-    scale(SCALE, ROT);
     translate(-5, -5);
 
     fill(0);
@@ -72,12 +75,12 @@ public class Projectile {
 
     popMatrix();
     popStyle();
-    
+
     if (toggle)
       ROT += up ? ROT_INC : -ROT_INC;
     else
       ROT -= up ? ROT_INC : -ROT_INC;
-      
+
     if ((up && ROT >= SCALE) || (!up && ROT <= -SCALE))
       toggle = false;
     else if ((up && ROT <= -SCALE) || (!up && ROT >= SCALE))

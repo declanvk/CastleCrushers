@@ -17,8 +17,9 @@ public class Level {
   private final int NUM_BATS = 5;
   private final int LIVES_POP_MULT = 5;
   private final int LIVES_POP_DURATION = 2;
-
+  
   private final int rows, columns;
+  
   private final PVector startPos, endPos;
   //TODO change
   public final Map map;
@@ -72,8 +73,8 @@ public class Level {
   private void spawnKeys(int numKeys, ArrayList<Key> keys) {
     int x, y;
     for (int i = 0; i < numKeys; i++) {
-      x = ((int) random(0, width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 5;
-      y = ((int) random(0, height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 12;
+      x = ((int) random(0, width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 15;
+      y = ((int) random(0, height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))) * ((Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)) + Map.WALL_WIDTH_PX + 8;
       keys.add(new Key(x, y));
     }
   }
@@ -112,7 +113,6 @@ public class Level {
       else
         target = character.bound.anchor;
       b.update(target);
-      drawTarget(target);
     }
 
     for (Projectile p : projectiles)
@@ -140,18 +140,6 @@ public class Level {
     paintRoutes();
     if (drawDoor)
       exitDoor.draw();
-  }
-
-  private void drawTarget(PVector target) {
-    pushStyle();
-    noFill();
-    strokeWeight(2);
-    stroke(255);
-    pushMatrix();
-    translate(target.x, target.y);
-    rect(0, 0, 50, 50);
-    popMatrix();
-    popStyle();
   }
 
   private void paintRoutes() {
