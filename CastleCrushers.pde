@@ -8,7 +8,7 @@ DeathAnim DA;
 Projectile p;
 void setup() {
   size(1210, 610);
-  lev = new Level(new PVector(0, (int) random(0, 10)), 25);
+  lev = new Level(new PVector(0, (int) random(0, 10)), 5);
   anim = new Animation();
   DA = new DeathAnim();
   p = new Projectile(lev.character);

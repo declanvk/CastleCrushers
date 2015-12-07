@@ -13,12 +13,8 @@ public class BoundingBox {
     pg.beginDraw();
 
     pg.pushStyle();
-    if (DEBUG) {
-      pg.noFill();
-    } else {
-      pg.noStroke();
-      pg.fill(c);
-    }
+    pg.noStroke();
+    pg.fill(c);
 
     pg.rect(anchor.x, anchor.y, width, height);
     pg.popStyle();

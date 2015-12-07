@@ -11,7 +11,11 @@ public class Bat
   Bat(Human ch) 
   {
     this.ENEMYSPEED = ch.MOVESPEED;
-    this.bound = new BoundingBox(PVector.add(new PVector(10, 10), crToXY(new PVector((int) random(width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)), (int) random(height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX))))), (int)(SCALE * 140), (int)(SCALE * 140));
+    PVector pos;
+    do {
+      pos = PVector.add(new PVector(10, 10), crToXY(new PVector((int) random(width / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)), (int) random(height / (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX)))));
+    } while(pos.dist(ch.bound.anchor) < 2 * (Map.CELL_HEIGHT_PX + Map.WALL_WIDTH_PX));
+    this.bound = new BoundingBox(pos, (int)(SCALE * 140), (int)(SCALE * 140));
   }
 
   public void draw() 
@@ -27,9 +31,9 @@ public class Bat
   }
 
   private final PVector centering = new PVector(Map.CELL_HEIGHT_PX / 2, Map.CELL_HEIGHT_PX / 2);
-  public void update(PVector target) 
+  public void update(PVector target, boolean near) 
   {
-    target = PVector.sub(PVector.add(crToXY(xyToCR(target)), centering), new PVector(SCALE * 70, SCALE * 70));
+    target = near ? target : PVector.sub(PVector.add(crToXY(xyToCR(target)), centering), new PVector(SCALE * 70, SCALE * 70));
     this.dir = PVector.sub(target, this.bound.anchor);
     this.dir.normalize();
     this.dir.mult(ENEMYSPEED);

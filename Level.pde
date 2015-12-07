@@ -104,32 +104,18 @@ public class Level {
         routes.put(b, map.astar( xyToCR(b.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
 
     ArrayList<PVector> path;
-    PVector target;
     for (Bat b : bats) {
       path = routes.get(b);
       int i = path.indexOf(xyToCR(b.bound.center()));
       if (i > 0)
-        target = crToXY(path.get(i - 1));
+        b.update(crToXY(path.get(i - 1)), false);
       else
-        target = character.bound.anchor;
-      b.update(target);
-      drawTarget(target);
+        b.update(character.bound.anchor, true);
+      
     }
 
     for (Projectile p : projectiles)
       p.update();
-  }
-  
-  private void drawTarget(PVector target) {
-    pushStyle();
-    noFill();
-    strokeWeight(2);
-    stroke(255);
-    pushMatrix();
-    translate(target.x, target.y);
-    rect(0, 0, 50, 50);
-    popMatrix();
-    popStyle();
   }
 
   public void draw() {

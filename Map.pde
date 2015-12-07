@@ -2,8 +2,6 @@ import java.util.Collections;
 
 //http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap Growing Tree
 
-private final boolean DEBUG = false;
-
 class Map {
   public static final int CELL_HEIGHT_PX = 50;
   public static final int WALL_WIDTH_PX = 10;
@@ -11,6 +9,9 @@ class Map {
   private final int MAZE_MODE_NEWEST = 0;
   private final int MAZE_MODE_RANDOM = 1;
   private final int MAZE_MODE_OLDEST = 2;
+  
+  private final color[] floorColors = {color(255), color(0, 105, 204), color(105, 0, 204), color(178, 89, 56), color(173, 131, 255)};
+  private final color[] wallColors = {color(255), color(105, 204, 0), color(204, 105, 0), color(86, 230, 200), color(255, 246, 86)};
 
   private final int mode = MAZE_MODE_RANDOM;
 
@@ -28,7 +29,6 @@ class Map {
   private final ArrayList<BoundingBox> drawList;
   private final PVector startPos;
 
-  //TODO change
   public final HashMap<PVector, ArrayList<PVector>> adjacency;
 
   Map(PVector start, Grid g) {
@@ -36,8 +36,10 @@ class Map {
     this.stoneTile = loadImage("stone_wall.png");
     this.rows = height / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
     this.columns = width / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
-    this.floor = generateTiling(woodTile, width, height);
-    this.walls = generateTiling(stoneTile, width, height);
+    
+    int i = (int) random(wallColors.length), j = (int) random(floorColors.length);
+    this.floor = generateTiling(woodTile, width, height, floorColors[j]);
+    this.walls = generateTiling(stoneTile, width, height, wallColors[i]);
     this.output = createGraphics(width, height);
 
     this.drawList = new ArrayList<BoundingBox>();
@@ -58,12 +60,14 @@ class Map {
         adj.put(new PVector(x, y), new ArrayList<PVector>());
   }
 
-  private PGraphics generateTiling(PImage tile, int w, int h) {
+  private PGraphics generateTiling(PImage tile, int w, int h, color tint) {
     PGraphics pg = createGraphics(w, h);
     int numX = w % tile.width == 0 ? w / tile.width : (w / tile.width) + 1;
     int numY = h % tile.height == 0 ? h / tile.height : (h / tile.height) + 1;
 
     pg.beginDraw();
+    pg.tint(tint);
+    
     for (int y = 0; y < numY; y++) {
       for (int x = 0; x < numX; x++) {
         pg.image(tile, x * tile.width, y * tile.width);
@@ -114,14 +118,9 @@ class Map {
     output.background(255);
     floor.beginDraw();
 
-    if (DEBUG) {
-      output.background(255);
-      output.image(maze, 0, 0);
-    } else {
-      output.image(floor, 0, 0);
-      walls.mask(maze);
-      output.image(walls, 0, 0);
-    }
+    output.image(floor, 0, 0);
+    walls.mask(maze);
+    output.image(walls, 0, 0);
 
     floor.endDraw();
     output.endDraw();
