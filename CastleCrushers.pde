@@ -1,4 +1,4 @@
-//Oscar Jones //<>//
+//Oscar Jones //<>// //<>//
 //Justis Mackaou
 //Zachary Richardson
 //Declan Kelly
@@ -14,7 +14,7 @@ void setup() {
 }
 
 void draw() {
-  if (frameCount < 685) { //685
+  if (frameCount < .685) { //685
     anim.draw();
   } else if (!lev.isGameOver() && !lev.isLevelOver()) {
     background(lev.getBackground());
@@ -27,7 +27,6 @@ void draw() {
   } else if(lev.isLevelOver()) {
     lev = new Level(new PVector(0, lev.getEndPos().y), lev.getNumLives());
     System.gc();
-    lev.paintRoutes();
   } 
   
 }

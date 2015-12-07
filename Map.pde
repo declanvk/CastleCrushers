@@ -8,7 +8,6 @@ class Map {
   public static final int CELL_HEIGHT_PX = 50;
   public static final int WALL_WIDTH_PX = 10;
 
-
   private final int MAZE_MODE_NEWEST = 0;
   private final int MAZE_MODE_RANDOM = 1;
   private final int MAZE_MODE_OLDEST = 2;

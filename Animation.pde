@@ -2,7 +2,7 @@
 // 672 Frames
 
 public class Animation {
-  PVector Loc; //<>//
+  PVector Loc; //<>// //<>//
   PVector dir;
   float time, LegR, ArmR, sz, walk, xC, yC;
   boolean animate, turned, LegDown, ArmDown, walking = false;
@@ -11,7 +11,7 @@ public class Animation {
   float[] cloudY = new float[num];
 
   int t=0;
- //<>//
+ //<>// //<>//
   Animation() {
     this.sz = 5;
     this.Loc = new PVector(-20, 400);
@@ -49,7 +49,6 @@ public class Animation {
     tree(455, 350, 0.6, 65, 138, 76);
     tree(888, 470, 2.0, 68, 132, 95);
     tree(1108, 440, 1.6, 66, 178, 93);
-    println(t);
   }
 
 
