@@ -107,16 +107,29 @@ public class Level {
     PVector target;
     for (Bat b : bats) {
       path = routes.get(b);
-      int i = path.indexOf(xyToCR(b.bound.anchor));
+      int i = path.indexOf(xyToCR(b.bound.center()));
       if (i > 0)
         target = crToXY(path.get(i - 1));
       else
         target = character.bound.anchor;
       b.update(target);
+      drawTarget(target);
     }
 
     for (Projectile p : projectiles)
       p.update();
+  }
+  
+  private void drawTarget(PVector target) {
+    pushStyle();
+    noFill();
+    strokeWeight(2);
+    stroke(255);
+    pushMatrix();
+    translate(target.x, target.y);
+    rect(0, 0, 50, 50);
+    popMatrix();
+    popStyle();
   }
 
   public void draw() {
@@ -137,26 +150,8 @@ public class Level {
     if (livesScaleInc > 0)
       livesScaleInc -= (Heart.SCALE_INC / LIVES_POP_DURATION);
 
-    paintRoutes();
     if (drawDoor)
       exitDoor.draw();
-  }
-
-  private void paintRoutes() {
-    PVector centering = new PVector(25, 25);
-    pushStyle();
-    strokeWeight(2);
-    ArrayList<PVector> path;
-    for (Bat b : bats) {
-      path = routes.get(b);
-      PVector prev = PVector.add(crToXY(path.get(0)), centering), current;
-      for (int i = 1; i < path.size(); i++) {
-        current = PVector.add(centering, crToXY(path.get(i)));
-        line(prev.x, prev.y, current.x, current.y);
-        prev = current;
-      }
-    }
-    popStyle();
   }
 
   public void checkWinState() {

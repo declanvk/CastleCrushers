@@ -25,7 +25,7 @@ public class Bat
     popMatrix();
     popStyle();
   }
-  
+
   private final PVector centering = new PVector(Map.CELL_HEIGHT_PX / 2, Map.CELL_HEIGHT_PX / 2);
   public void update(PVector target) 
   {
