@@ -18,12 +18,9 @@ public class Level {
   private final int LIVES_POP_MULT = 5;
   private final int LIVES_POP_DURATION = 2;
   
-<<<<<<< HEAD
-=======
   private final PFont SCORE_FONT = createFont("TerminusTTF-4.39.ttf", 32);
   private final int SCORE_INC = 100;
   private final int SCORE_DEC = 50;
->>>>>>> origin/master
   
   private final int rows, columns;
   
@@ -50,13 +47,8 @@ public class Level {
 
   private boolean gameOver = false;
   private boolean levelOver = false;
-<<<<<<< HEAD
   
-  Level(PVector start, int l) {
-=======
-
   Level(PVector start, int l, int s) {
->>>>>>> origin/master
     this.rows = (height - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
     this.columns = (width - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
     this.startPos = start;

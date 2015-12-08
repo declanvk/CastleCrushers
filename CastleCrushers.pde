@@ -6,7 +6,6 @@ Animation anim;
 Level lev;
 DeathAnim DA;
 Projectile p;
-int score=0;
 void setup() {
   size(1210, 610);
   lev = new Level(new PVector(0, (int) random(0, 10)), 5, 0);
@@ -25,8 +24,6 @@ void draw() {
     lev.handleCollisions();
     lev.checkWinState();
     lev.draw();
-    
-    text("score: "+score, 100,100);
   } else if (lev.isGameOver()) {
     DA.draw();
   } else if (lev.isLevelOver()) {
