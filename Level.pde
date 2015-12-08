@@ -18,6 +18,7 @@ public class Level {
   private final int LIVES_POP_MULT = 5;
   private final int LIVES_POP_DURATION = 2;
   
+  
   private final int rows, columns;
   
   private final PVector startPos, endPos;
@@ -41,7 +42,7 @@ public class Level {
 
   private boolean gameOver = false;
   private boolean levelOver = false;
-
+  
   Level(PVector start, int l) {
     this.rows = (height - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
     this.columns = (width - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
@@ -145,8 +146,10 @@ public class Level {
   public void checkWinState() {
     if (numKeysCollected >= NUM_KEYS)
       drawDoor = true;
-    if (endPos.equals(xyToCR(character.bound.anchor)))
+    if (endPos.equals(xyToCR(character.bound.anchor))){
       levelOver = true;
+      score+=100;
+    }
   }
 
   public void handleCollisions() {
@@ -204,8 +207,10 @@ public class Level {
           hit |= true;
         }
       }
-      if (hit)
+      if (hit){
         projectiles.remove(j);
+        score+=5;
+      }
     }
 
     //Projectiles hit walls
@@ -227,6 +232,7 @@ public class Level {
       if (k.bound.intersects(character.bound)) {
         numKeysCollected++;
         kIter.remove();
+        score+=30;
       }
     }
   }
