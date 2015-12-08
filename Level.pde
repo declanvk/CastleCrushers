@@ -19,8 +19,10 @@ public class Level {
   private final int LIVES_POP_DURATION = 2;
   
   private final PFont SCORE_FONT = createFont("TerminusTTF-4.39.ttf", 32);
-  private final int SCORE_INC = 100;
-  private final int SCORE_DEC = 50;
+  private final int SCORE_INC_BAT = 5;
+  private final int SCORE_INC_KEY = 30;
+  private final int SCORE_INC_LEVEL = 100;
+  private final int SCORE_DEC_BAT = 50;
   
   private final int rows, columns;
   
@@ -164,7 +166,7 @@ public class Level {
       drawDoor = true;
     if (endPos.equals(xyToCR(character.bound.anchor))){
       levelOver = true;
-      score+=100;
+      score += SCORE_INC_LEVEL;
     }
   }
 
@@ -199,7 +201,7 @@ public class Level {
         bIter.add(newBat);
         routes.put(newBat, map.astar(xyToCR(newBat.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
         
-        score -= SCORE_DEC;
+        score -= SCORE_DEC_BAT;
         if (lives.size() > 0) {
           lives.remove(0);
           livesScaleInc = Heart.SCALE_INC * LIVES_POP_MULT;
@@ -221,7 +223,7 @@ public class Level {
           bats.set(i, newBat);
           routes.put(newBat, map.astar(xyToCR(newBat.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
           
-          score += SCORE_INC;
+          score += SCORE_INC_BAT;
           hit |= true;
         }
       }
@@ -248,7 +250,7 @@ public class Level {
       if (k.bound.intersects(character.bound)) {
         numKeysCollected++;
         kIter.remove();
-        score+=30;
+        score += SCORE_INC_KEY;
       }
     }
   }
