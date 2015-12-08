@@ -18,6 +18,9 @@ public class Level {
   private final int LIVES_POP_MULT = 5;
   private final int LIVES_POP_DURATION = 2;
   
+  private final PFont SCORE_FONT = createFont("TerminusTTF-4.39.ttf", 32);
+  private final int SCORE_INC = 100;
+  
   private final int rows, columns;
   
   private final PVector startPos, endPos;
@@ -38,11 +41,13 @@ public class Level {
   private float livesScaleInc = 0.0;
 
   private final HashMap<Bat, ArrayList<PVector>> routes;
+  
+  private int score;
 
   private boolean gameOver = false;
   private boolean levelOver = false;
 
-  Level(PVector start, int l) {
+  Level(PVector start, int l, int s) {
     this.rows = (height - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
     this.columns = (width - Map.WALL_WIDTH_PX) / (Map.WALL_WIDTH_PX + Map.CELL_HEIGHT_PX);
     this.startPos = start;
@@ -59,6 +64,7 @@ public class Level {
     this.exitDoor = new Door(PVector.add(new PVector(5, 0), crToXY(endPos)));
     this.lives = new ArrayList<Heart>(5);
     this.routes = new HashMap<Bat, ArrayList<PVector>>();
+    this.score = s;
 
     initLives(l, lives);
     spawnBats(NUM_BATS, bats, routes, character, map);
@@ -140,6 +146,16 @@ public class Level {
 
     if (drawDoor)
       exitDoor.draw();
+      
+    drawScore(this.score);
+  }
+  
+  private void drawScore(int score) {
+    pushStyle();
+    textFont(SCORE_FONT);
+    textAlign(RIGHT);
+    text(score, width - 10, 30);
+    popStyle();
   }
 
   public void checkWinState() {
@@ -200,7 +216,8 @@ public class Level {
           Bat newBat = new Bat(character);
           bats.set(i, newBat);
           routes.put(newBat, map.astar(xyToCR(newBat.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
-
+          
+          score += SCORE_INC;
           hit |= true;
         }
       }
@@ -249,5 +266,9 @@ public class Level {
 
   public PVector getEndPos() {
     return endPos;
+  }
+  
+  public int getScore() {
+    return score;
   }
 }

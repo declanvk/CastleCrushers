@@ -8,7 +8,7 @@ DeathAnim DA;
 Projectile p;
 void setup() {
   size(1210, 610);
-  lev = new Level(new PVector(0, (int) random(0, 10)), 5);
+  lev = new Level(new PVector(0, (int) random(0, 10)), 5, 0);
   anim = new Animation();
   DA = new DeathAnim();
   p = new Projectile(lev.character);
@@ -16,7 +16,7 @@ void setup() {
 }
 
 void draw() {
-  if (frameCount < 1404) { 
+  if (frameCount < .1404) { 
     anim.draw();
   } else if (!lev.isGameOver() && !lev.isLevelOver()) {
     background(lev.getBackground());
@@ -27,7 +27,7 @@ void draw() {
   } else if (lev.isGameOver()) {
     DA.draw();
   } else if (lev.isLevelOver()) {
-    lev = new Level(new PVector(0, lev.getEndPos().y), lev.getNumLives());
+    lev = new Level(new PVector(0, lev.getEndPos().y), lev.getNumLives(), lev.getScore());
     System.gc();
   }
 }
