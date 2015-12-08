@@ -225,10 +225,8 @@ public class Level {
           hit |= true;
         }
       }
-      if (hit){
+      if (hit)
         projectiles.remove(j);
-        score+=5;
-      }
     }
 
     //Projectiles hit walls
