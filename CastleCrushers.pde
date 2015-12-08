@@ -1,5 +1,5 @@
 //Oscar Jones //<>// //<>//
-//Justis Mackaou
+//Justis Mackaoui
 //Zachary Richardson
 //Declan Kelly
 Animation anim;
