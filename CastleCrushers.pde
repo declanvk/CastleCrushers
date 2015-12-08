@@ -1,4 +1,4 @@
-//Oscar Jones //<>// //<>//
+//Oscar Jones //<>//
 //Justis Mackaoui
 //Zachary Richardson
 //Declan Kelly

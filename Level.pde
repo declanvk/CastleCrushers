@@ -109,8 +109,10 @@ public class Level {
       int i = path.indexOf(xyToCR(b.bound.center()));
       if (i > 0)
         b.update(crToXY(path.get(i - 1)), false);
-      else
+      else if(i == 0)
         b.update(character.bound.anchor, true);
+      else
+        b.update(crToXY(path.get(path.size() - 1)), false);
       
     }
 

@@ -36,7 +36,6 @@ class Map {
     this.stoneTile = loadImage("stone_wall.png");
     this.rows = height / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
     this.columns = width / (CELL_HEIGHT_PX +WALL_WIDTH_PX);
-    
     int i = (int) random(wallColors.length), j = (int) random(floorColors.length);
     this.floor = generateTiling(woodTile, width, height, floorColors[j]);
     this.walls = generateTiling(stoneTile, width, height, wallColors[i]);
