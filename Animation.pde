@@ -9,27 +9,29 @@ public class Animation {
   boolean animate, turned, LegDown, ArmDown, walking = false;
   boolean birdFly, birdDown, wingDown;
   int num = 4;
+  PFont font;
   int t = 0;
   float Bangle = 0;
   float wingR = PI/8;
-  PFont terminus = createFont("TerminusTTF-4.39.ttf",30);
-  PFont luminari = createFont("Luminari-Regular-48.vlw",30);
-  
+  PFont terminus = createFont("TerminusTTF-4.39.ttf", 30);
+  PFont luminari = createFont("Luminari-Regular-48.vlw", 30);
+
   float[] cloudX = new float[num];
   float[] cloudY = new float[num];
-  
+
   Animation() {
     this.sz = 5;
     this.Loc = new PVector(-20, 400);
     this.dir = new PVector(1, 0);
-    this.Bloc = new PVector(170,523);
-    this.Bdir = new PVector(-1.5,-4.5);
-    this.casLoc = new PVector(234,-120);
-    this.cruLoc = new PVector(574,-120);
-    this.castle = new PVector(0,6);
+    this.Bloc = new PVector(170, 523);
+    this.Bdir = new PVector(-1.5, -4.5);
+    this.casLoc = new PVector(234, -120);
+    this.cruLoc = new PVector(574, -120);
+    this.castle = new PVector(0, 6);
     this.crushers = new PVector(0, 6);
     this.time = 1;
     this.walk=1;
+    this.font = loadFont("Luminari-Regular-48.vlw");
     for (int x = 0; x < num; x++) {
       if (x < num/2) {
         this.cloudX[x] = random(30, width/2);
@@ -41,48 +43,50 @@ public class Animation {
   }
 
   public void draw() {  
-    if(frameCount < 360) {
-      image(paper,0,0);
-      textFont(luminari,72);
+    if (frameCount < 360) {
+      image(paper, 0, 0);
+      textFont(font, 75); 
       String s = "Lonely Sir FRANKLIN had the day off and felt compelled to explore deep into the woods...";
-      text(s, 120,120, 990,515);  
+      text(s, 120, 120, 990, 515);
     }
-    
-    if(frameCount >= 360) {
-    
+
+    if (frameCount >= 360) {
+
       background(12, 205, 216);
       fill(78, 155, 16);
+      noStroke();
       rect(0, height/2, width, height/2);
+      stroke(0);
       path();
       tree(694, 320, 0.3, 65, 120, 80);
       castle(520, 310);
       tree(59, 340, 0.7, 106, 118, 94);
       tree(206, 388, 1.0, 99, 120, 52);
-      
-      if(t>300 && t<335) {
-        Bangle = Bangle += -radians(1.5); 
-      }
-      if(t>=335 && t<345) {
-        Bangle = Bangle += radians(1.5);
-      }
-      if(t>=345 && t<355) {
+
+      if (t>300 && t<335) {
         Bangle = Bangle += -radians(1.5);
       }
-      if(t>=355 && t<390) {
+      if (t>=335 && t<345) {
         Bangle = Bangle += radians(1.5);
       }
-      if(t>=390) {
+      if (t>=345 && t<355) {
+        Bangle = Bangle += -radians(1.5);
+      }
+      if (t>=355 && t<390) {
+        Bangle = Bangle += radians(1.5);
+      }
+      if (t>=390) {
         Bangle = 0;
       }
-      
+
       birdG(Bangle);
-      
-      if(frameCount > 930) {
-      princessCry();
+
+      if (frameCount > 930) {
+        princessCry();
       }
-      
-      if(frameCount <= 1104) {
-       Knight(); 
+
+      if (frameCount <= 1104) {
+        Knight();
       }
       animate();
       clouds();
@@ -95,7 +99,7 @@ public class Animation {
       tree(455, 350, 0.6, 65, 138, 76);
       tree(888, 445, 1.9, 68, 132, 95);
       tree(1108, 440, 1.6, 66, 178, 93);
-      
+
       castle();
       crushers();
       exclamation();
@@ -265,27 +269,27 @@ public class Animation {
 
   public void animate() {
     //bird (raven)
-    if(frameCount > 950) {
-      birdFly = true;  
+    if (frameCount > 950) {
+      birdFly = true;
     }
     if (birdFly == true) {
-       Bloc.x = Bloc.x + Bdir.x*time;
-       Bloc.y = Bloc.y + Bdir.y*time;
-       
-       if (wingR > PI/4) {
-         wingDown = true;
-       }
-       if (wingR < -PI/6) {
-         wingDown = false;  
-       }
-       
-       if (wingDown == false) {
-         wingR += .20;
-       } else {
-         wingR -= .20;  
-       }
+      Bloc.x = Bloc.x + Bdir.x*time;
+      Bloc.y = Bloc.y + Bdir.y*time;
+
+      if (wingR > PI/4) {
+        wingDown = true;
+      }
+      if (wingR < -PI/6) {
+        wingDown = false;
+      }
+
+      if (wingDown == false) {
+        wingR += .20;
+      } else {
+        wingR -= .20;
+      }
     }
-    
+
     //knight
     if (frameCount < 940) {
       Loc.x = Loc.x + dir.x*time;
@@ -312,9 +316,9 @@ public class Animation {
         ArmR -= .04;
       } else {
         ArmR += .04;
-      }      
+      }
     } 
-    if(frameCount > 1020 && Loc.x <600) {
+    if (frameCount > 1020 && Loc.x <600) {
       Loc.x = Loc.x + dir.x*time*2;
       Loc.y = Loc.y + dir.y*time*2;
       // Legs moving
@@ -339,7 +343,7 @@ public class Animation {
         ArmR -= .04;
       } else {
         ArmR += .04;
-      }      
+      }
     }
     if (Loc.x >= 600 && Loc.y >385) {
       dir.y=-1;
@@ -363,7 +367,7 @@ public class Animation {
       frameRate(60);
       noLoop();
     }
-  
+
     if (frameCount>420 && casLoc.y<=150) {
       casLoc.x = casLoc.x + castle.x*time;
       casLoc.y = casLoc.y + castle.y*time;
@@ -463,174 +467,170 @@ public class Animation {
     stroke(0);
     popStyle();
   }
-  
+
   public void birdG(float bR) {
-    
-    if(frameCount > 1020) {
-    birdFly = true;  
+
+    if (frameCount > 1020) {
+      birdFly = true;
     }
-    
+
     pushStyle();
     noStroke();
     pushMatrix();
-    translate(Bloc.x,Bloc.y);
+    translate(Bloc.x, Bloc.y);
     //scale(0.7);
-    fill(38,37,42); //raven grey 
-      //legs
+    fill(38, 37, 42); //raven grey 
+    //legs
+    pushMatrix();
+    translate(7, 18);
+    rotate(radians(20));
+    rect(-1, -6, 2, 18);
+    rect(-8, 0, 2, 12);
+    popMatrix(); 
+    //feet
+    pushMatrix();
+    translate(3, 29);
+    rotate(radians(20));
+    rect(-1, 0, 1, 8);
+    rotate(-PI/6);
+    rect(-1, 0, 1, 8);
+    rotate(PI/3);
+    rect(-1, 0, 1, 8);
+    popMatrix();
+    pushMatrix();
+    translate(-4, 26);
+    rotate(radians(30));
+    rect(-1, 0, 1, 8);
+    rotate(-PI/6);
+    rect(-1, 0, 1, 8);
+    rotate(PI/3);
+    rect(-1, 0, 1, 8);
+    popMatrix();
+
+    if (t > 200) {
+    }
+    rotate(bR); //rotates bird, not feet
+
+    //body
+    pushMatrix();
+    rotate(radians(20));
+    ellipse(0, 0, 64, 32);
+    popMatrix();
+    //tail
+    pushMatrix();
+    translate(25, 5);
+    rotate(radians(45));
+    ellipse(0, 0, 48, 10);
+    popMatrix();
+
+    //head + beak
+    pushMatrix();
+    translate(-26, -17);
+    fill(0);
+    beginShape();
+    curveVertex(18, 27);
+    curveVertex(0, 5);
+    curveVertex(-8, -2);
+    curveVertex(-25, 0);
+    curveVertex(-28, 3);
+    curveVertex(-33, 6);
+    endShape();
+    triangle(-24, 2, -14, 1, -11, 4);
+    fill(38, 37, 42);
+    pushMatrix();
+    rotate(PI/12);
+    ellipse(0, 0, 30, 20); //head
+    popMatrix();  
+    fill(0);
+    ellipse(-8, -4, 4, 4); //eye
+    popMatrix();
+
+    if (birdFly == false) {
       pushMatrix();
-        translate(7,18);
-        rotate(radians(20));
-        rect(-1,-6, 2,18);
-        rect(-8,0,2,12);
-      popMatrix(); 
-      //feet
-      pushMatrix();
-        translate(3,29);
-        rotate(radians(20));
-        rect(-1,0, 1,8);
-        rotate(-PI/6);
-        rect(-1,0,1,8);
-        rotate(PI/3);
-        rect(-1,0,1,8);
+      translate(-26, -17);
+      stroke(0);
+      fill(38, 37, 42);
+      beginShape(); // wing
+      curveVertex(4, -18);
+      curveVertex(14, 8);
+      curveVertex(23, 24);
+      curveVertex(42, 26);
+      curveVertex(74, 18);
+      endShape();
       popMatrix();
+    } else {
+      pushStyle();
       pushMatrix();
-        translate(-4,26);
-        rotate(radians(30));
-        rect(-1,0, 1,8);
-        rotate(-PI/6);
-        rect(-1,0,1,8);
-        rotate(PI/3);
-        rect(-1,0,1,8);
+      translate(-13, -11);
+      rotate(wingR);
+      fill(38, 37, 42);
+      ellipse(37, 4, 70, 30);
       popMatrix();
-      
-      if(t > 200) {
-         
-      }
-      rotate(bR); //rotates bird, not feet
-      
-      //body
-      pushMatrix();
-        rotate(radians(20));
-        ellipse(0,0, 64,32);
-      popMatrix();
-      //tail
-      pushMatrix();
-        translate(25,5);
-        rotate(radians(45));
-        ellipse(0,0, 48,10);
-      popMatrix();
-     
-      //head + beak
-      pushMatrix();
-      translate(-26,-17);
-        fill(0);
-        beginShape();
-          curveVertex(18,27);
-          curveVertex(0,5);
-          curveVertex(-8,-2);
-          curveVertex(-25,0);
-          curveVertex(-28,3);
-          curveVertex(-33,6);
-        endShape();
-        triangle(-24,2, -14,1, -11,4);
-        fill(38,37,42);
-        pushMatrix();
-        rotate(PI/12);
-          ellipse(0,0,30,20); //head
-        popMatrix();  
-          fill(0);
-          ellipse(-8,-4,4,4); //eye
-      popMatrix();
-      
-        if(birdFly == false) {
-          pushMatrix();
-          translate(-26,-17);
-            stroke(0);
-            fill(38,37,42);
-            beginShape(); // wing
-              curveVertex(4,-18);
-              curveVertex(14,8);
-              curveVertex(23,24);
-              curveVertex(42,26);
-              curveVertex(74,18);
-            endShape();
-          popMatrix();
-        } else {
-          pushStyle();
-          pushMatrix();
-            translate(-13,-11);
-            rotate(wingR);
-            fill(38,37,42);
-            ellipse(37,4, 70,30);
-          popMatrix();
-          popStyle();
-        }
-     
+      popStyle();
+    }
+
     popMatrix();
     popStyle();
-    
   }
-  
+
   public void princessCry() {
     pushStyle();
     pushMatrix();   
-      fill(255);
-      noStroke();
-      ellipse(715,276, 130,90);
-      
-      for (int i=0; i<90; i++) {
-        float cx=  70*cos(radians(i)-PI/4);
-        float cy= -70*sin(radians(i)-PI/4);
-        pushMatrix();
-          translate(610,300);
-          rotate(PI/4);
-          ellipse(cx,cy, 0.3*i, 5);   
-        popMatrix();
-      }
-     
-      textFont(terminus);
-      fill(0);
-      text("HELP!!!", 666,284); 
-    
+    fill(255);
+    noStroke();
+    ellipse(715, 276, 130, 90);
+
+    for (int i=0; i<90; i++) {
+      float cx=  70*cos(radians(i)-PI/4);
+      float cy= -70*sin(radians(i)-PI/4);
+      pushMatrix();
+      translate(610, 300);
+      rotate(PI/4);
+      ellipse(cx, cy, 0.3*i, 5);   
+      popMatrix();
+    }
+
+    textFont(font, 30); 
+    fill(0);
+    text("HELP!!!", 660, 284); 
+
     popMatrix();
     popStyle();
   }
-  
+
   public void castle() {
     pushMatrix();
-      translate(casLoc.x, casLoc.y);
-      textFont(luminari,100);
-      tint(40,180,40);
-      text("Castle",0,0);
+    translate(casLoc.x, casLoc.y);
+      textFont(font, 100); 
+    tint(40, 180, 40);
+    text("Castle", 0, 0);
     popMatrix();
   }
-  
+
   public void crushers() {
     pushMatrix();
-      translate(cruLoc.x, cruLoc.y);
-      textFont(luminari,100);
-      tint(40,180,40);
-      text("Crushers",0,0);
+    translate(cruLoc.x, cruLoc.y);
+      textFont(font, 100); 
+    tint(40, 180, 40);
+    text("Crushers", 0, 0);
     popMatrix();
   }
-  
+
   public void exclamation() {
     pushStyle();
     pushMatrix();
-      translate(660,430);
-      scale(0.7);
-      if(frameCount>940 && frameCount<1020) {
-        fill(255);
-        noStroke();
-        ellipse(0,25, 9,9);
-        for(int i=0; i<30; i++) {
-          rectMode(CENTER);
-          rect(0,-20+1.2*i, 12-0.3*i,5);    
-        }
+    translate(660, 430);
+    scale(0.7);
+    if (frameCount>940 && frameCount<1020) {
+      fill(255);
+      noStroke();
+      ellipse(0, 25, 9, 9);
+      for (int i=0; i<30; i++) {
+        rectMode(CENTER);
+        rect(0, -20+1.2*i, 12-0.3*i, 5);
       }
+    }
     popMatrix();
     popStyle();
   }
-  
 }
-
