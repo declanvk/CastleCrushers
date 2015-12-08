@@ -16,7 +16,7 @@ void setup() {
 }
 
 void draw() {
-  if (frameCount < 1102) { 
+  if (frameCount < 1404) { 
     anim.draw();
   } else if (!lev.isGameOver() && !lev.isLevelOver()) {
     background(lev.getBackground());
