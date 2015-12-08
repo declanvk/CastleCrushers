@@ -20,6 +20,7 @@ public class Level {
   
   private final PFont SCORE_FONT = createFont("TerminusTTF-4.39.ttf", 32);
   private final int SCORE_INC = 100;
+  private final int SCORE_DEC = 50;
   
   private final int rows, columns;
   
@@ -195,7 +196,8 @@ public class Level {
         Bat newBat = new Bat(character);
         bIter.add(newBat);
         routes.put(newBat, map.astar(xyToCR(newBat.bound.anchor), xyToCR(character.bound.anchor), map.adjacency));
-
+        
+        score -= SCORE_DEC;
         if (lives.size() > 0) {
           lives.remove(0);
           livesScaleInc = Heart.SCALE_INC * LIVES_POP_MULT;
