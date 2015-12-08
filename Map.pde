@@ -11,7 +11,7 @@ class Map {
   private final int MAZE_MODE_OLDEST = 2;
   
   private final color[] floorColors = {color(255), color(0, 105, 204), color(105, 0, 204), color(178, 89, 56), color(173, 131, 255)};
-  private final color[] wallColors = {color(255), color(105, 204, 0), color(204, 105, 0), color(86, 230, 200), color(255, 246, 86)};
+  private final color[] wallColors = {color(255), color(105, 204, 0), color(86, 230, 200), color(255, 246, 86)};
 
   private final int mode = MAZE_MODE_RANDOM;
 
